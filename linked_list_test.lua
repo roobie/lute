@@ -107,4 +107,12 @@ tap:addTest(
     printf('# %s', l2)
 end)
 
+tap:addTest(
+  'sorting a list',
+  function (test)
+    local list = List.new { 6, 4, 2, 3, 1, 5 }
+    list:sortInPlace()
+    test:equal(tostring(list), 'List(1, 2, 3, 4, 5, 6)')
+end)
+
 tap:run()

@@ -1,5 +1,7 @@
 local prototype = require('prototype')
 
+local quickSort = require('quick_sort_generic')
+
 --[[
 
   The LinkedList implements the List abstract data type. It is a doubly linked
@@ -14,9 +16,14 @@ local prototype = require('prototype')
 
 ]]
 
-local LinkedListNode = {}
+local LinkedListNode = prototype {
+  __tostring = function (self)
+    return string.format('N(%s)', self._element)
+  end
+}
+
 function LinkedListNode.new (element)
-  return {
+  return LinkedListNode {
       _element = element;
       _prevNode = nil;
       _nextNode = nil;
@@ -255,6 +262,24 @@ LinkedList = prototype {
       return result
     end;
 
+    swap = function (self, i1, i2)
+      local node1 = self:findAt(i1)
+      local node2 = self:findAt(i2)
+      local temp = node1._element
+      node1._element = node2._element
+      node2._element = temp
+    end;
+
+    sortInPlace = function (self, comparator)
+      quickSort(self, comparator)
+    end;
+
+    sort = function (self, comparison)
+      -- todo stable quick sort implementation.
+      -- return a new List.
+      -- consider implementing a sortInPlace function too.
+    end;
+
     --[[
       TODO:
       addRange
@@ -278,7 +303,12 @@ LinkedList = prototype {
     ]]
 }
 
--- allow indexing the list by list[x]
+--[[
+
+  Allows indexing the list by list[x], but still be able to look up metatable
+  methods.
+
+]]
 LinkedList.__index = function (self, key)
   if type(key) == 'number' then
     return self:get(key)
@@ -287,24 +317,46 @@ LinkedList.__index = function (self, key)
   end
 end
 
-function LinkedList.new (elements)
-  local list = LinkedList {
-      _length = 0;
-      _head = nil;
-      _iterating = false;
-  }
-  for _, element in ipairs(elements or {}) do
-    list:add(element)
+
+--[[
+
+  `new` creates a new List. The first and only argument is optional, and if it
+is a table, all (ipairs) elements of the table will be appended in order to the
+new list
+
+]]
+function LinkedList.new (elements) local list = LinkedList {
+_length = 0; _head = nil; _iterating = false; }
+
+  if type(elements) == 'table' then
+    for _, element in ipairs(elements) do
+      list:add(element)
+    end
   end
+
   return list
 end
 
+
+--[[
+
+  `cons` constructs a new List by prepending the `element` to the `list`
+
+  @example
+  local l1 = List.new()
+  local l2 = List.cons(1, l1)
+  assert(l1:length() == 0 and l2:length() == 1 and l1 ~= l2, 'A new list was created')
+
+]]
 function LinkedList.cons (element, list)
-  local t = {element}
+  local result = LinkedList.new()
+  result:append(element)
+
   for _, e in list:iter() do
-    t[#t + 1] = e
+    result:append(e)
   end
-  return LinkedList.new(t)
+
+  return result
 end
 
 return LinkedList

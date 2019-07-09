@@ -8,4 +8,5 @@ local tests = {
   require('min_heap_test');
   require('set_test');
   require('collections_test');
+  require('quick_sort_test');
 }
