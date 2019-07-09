@@ -5,8 +5,10 @@ local inspect = require('inspect')
 local fmt = require('fmt')
 local printf = fmt.printf
 
-local tap = Tap.new()
-tap:addTest(function (test)
+local tap = Tap.new { name = 'linked_list.lua' }
+tap:addTest(
+  'Test basic list operations',
+  function (test)
     test:plan(12)
     local l1 = List.new()
     l1:add(1)
@@ -60,6 +62,12 @@ tap:addTest(function (test)
     test:equal(l1:length(), 0)
 end)
 
+tap:addTest(
+  'More basic list stuff',
+  function (test)
+    test:isTrue(List.new():isEmpty(), 'An empty list should be empty')
+end)
+
 tap:addTest(function (test)
     local l1, l2, l3
     l1 = List.new {1, 2}
@@ -76,7 +84,9 @@ tap:addTest(function (test)
     test:equal(l3[3], 3)
 end)
 
-tap:addTest(function (test)
+tap:addTest(
+  'Test __index and __newindex',
+  function (test)
     l0 = List.new()
     test:equal(tostring(l0), 'List()')
     l0:insertAt(1, 1)
@@ -89,6 +99,7 @@ tap:addTest(function (test)
     test:equal(tostring(l1), 'List(0, 1, 2, 3)')
     l1[4] = 9
     test:equal(tostring(l1), 'List(0, 1, 2, 9, 3)')
+    test:equal(l1[4], 9)
 
     local l2 = List.new {
       l0, l1

@@ -6,19 +6,17 @@ local printf = fmt.printf
 local prototype = require('prototype')
 
 local Test = prototype({
-  name = function (self, aName)
-    self._name = aName
-  end;
-
   enter = function (self)
-    print(('# %s'):format(self._name))
+    printf('# %s', self._name)
   end;
 
   exit = function (self)
     if self._expectedTestCount > 0 then
       if self._testCount ~= self._expectedTestCount then
-        print(('not ok %d - expected %d tests'):format(self._testCount + 1, self._expectedTestCount))
+        printf('not ok %d - expected %d tests', self._testCount + 1, self._expectedTestCount)
       end
+    else
+      printf('1..%d', self._testCount)
     end
   end;
 
@@ -31,7 +29,7 @@ local Test = prototype({
       -- TODO: cannot set this more than once
     end
     self._expectedTestCount = expectedTestCount
-    print(('%d..%d'):format(1, self._expectedTestCount))
+    printf('%d..%d', 1, self._expectedTestCount)
   end;
 
   check = function (self, args)
@@ -63,11 +61,26 @@ local Test = prototype({
           end;
       }
   end;
+
+  isTrue = function (self, actual, message)
+    self:check {
+      message = message or 'should be true';
+      assertion = function ()
+        return actual == true
+      end;
+      printInfo = function ()
+        printf('  operator: %s', 'isTrue')
+        printf('  expected: %s', true)
+        printf('  actual  : %s', inspect(actual))
+      end;
+    }
+  end
 })
 
-function Test.new ()
+function Test.new (name, testFunction)
   local instance = {
-    _name = '(anonymous)';
+    _name = name;
+    _testFunction = testFunction;
     _testCount = 0;
     _failCount = 0;
     _expectedTestCount = 0;
@@ -77,15 +90,22 @@ function Test.new ()
   return Test(instance)
 end
 
-local TestHarness = prototype({
-  addTest = function (self, testFunction)
-    table.insert(self._tests, testFunction)
+local TestSuite = prototype({
+  addTest = function (self, maybeName, testFunction)
+    if testFunction == nil then
+      testFunction = maybeName
+      maybeName = '(anonymous)'
+    end
+    local test = Test.new(maybeName, testFunction)
+    table.insert(self._tests, test)
   end;
   run = function (self)
-    for n, testFunction in ipairs(self._tests) do
-      local test = Test.new()
+    if self._name then
+      printf('# Suite: %s', self._name)
+    end
+    for n, test in ipairs(self._tests) do
       test:enter()
-      testFunction(test)
+      test._testFunction(test)
       test:exit()
     end
   end;
@@ -95,13 +115,14 @@ function _module.printHeader ()
   print('TAP version 13')
 end
 
-function _module.new (name)
+function _module.new (opts)
+  opts = opts or {}
   local instance = {
-    _name = name;
+    _name = opts.name;
     _tests = {};
   }
 
-  return TestHarness(instance)
+  return TestSuite(instance)
 end
 
 return _module

@@ -6,26 +6,20 @@ local function dump (what)
   print(inspect(what))
 end
 
-local tap = Tap.new()
+local tap = Tap.new {name = 'strings.lua'}
 
-tap:addTest(function (test)
-    test:name('Test string split')
-    test:plan(1)
+tap:addTest(
+  'Test string split', function (test)
+    test:plan(3)
 
     local r = strings.split('')
     test:equal(#r, 0, 'Splitting an empty string should yield no results')
-end)
 
-tap:addTest(function (test)
-    test:name('Test string split')
-    test:plan(4)
-    test:comment('This is a comment')
+    test:comment('Even though splitting strings are so mundane, we test it more.')
 
-    local r = strings.split('a,b,c', ',')
-    test:equal(#r, 3)
-    test:equal(r[1], 'a')
-    test:equal(r[2], 'b')
-    test:equal(r[3], 'c')
+    r = strings.split('a,b,c', ',')
+    test:equal(#r, 3, 'We expect "a,b,c" split by "," should be 3 elements long')
+    test:equal(r[1]..r[2]..r[3], 'abc')
 end)
 
 tap:run()

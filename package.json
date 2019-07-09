@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "lua _run_tests.lua | tap-spec",
-    "test:watch": "nodemon -x \"npm run test\""
+    "test:watch": "nodemon _run_tests.lua"
   },
   "author": "",
   "license": "ISC",
