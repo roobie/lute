@@ -4,12 +4,14 @@
   "description": "Lua reusable stuff",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "lua _run_tests.lua | tap-spec",
+    "test:watch": "nodemon -x \"npm run test\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^1.19.1"
+    "nodemon": "^1.19.1",
+    "tap-spec": "^5.0.0"
   },
   "repository": {
     "type": "git",

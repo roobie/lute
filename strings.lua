@@ -5,8 +5,8 @@ local EMPTY_STRING = ''
 
 --[[
 
-  @parameter _string {string} - The string to split
-  @parameter [_separator] {string/regex} - What to split by. Defaults to %s (whitespace)
+  @parameter _string <string> - The string to split
+  @parameter [_separator] <string/regex> - What to split by. Defaults to %s (whitespace)
 ]]
 function _module.split (_string, _separator)
   _separator = _separator or '%s'

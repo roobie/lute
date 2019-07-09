@@ -25,7 +25,7 @@ tap:addTest(function (test)
     test:equal(#r, 3)
     test:equal(r[1], 'a')
     test:equal(r[2], 'b')
-    test:equal(r[3], 'd', '# TODO correct')
+    test:equal(r[3], 'c')
 end)
 
 tap:run()

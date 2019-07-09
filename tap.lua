@@ -44,8 +44,9 @@ local Test = prototype({
       local tb = debug.traceback('', 2):sub(2)
       printf('  %s', tb)
       printf('  ---')
+      self._failCount = self._failCount + 1
     else
-      print(('ok %d'):format(self._testCount))
+      printf('ok %d %s', self._testCount, args.message)
     end
   end;
 
@@ -68,6 +69,7 @@ function Test.new ()
   local instance = {
     _name = '(anonymous)';
     _testCount = 0;
+    _failCount = 0;
     _expectedTestCount = 0;
     _success = true;
     _messages = {};
@@ -80,7 +82,6 @@ local TestHarness = prototype({
     table.insert(self._tests, testFunction)
   end;
   run = function (self)
-    print('TAP version 13')
     for n, testFunction in ipairs(self._tests) do
       local test = Test.new()
       test:enter()
@@ -90,10 +91,14 @@ local TestHarness = prototype({
   end;
 })
 
+function _module.printHeader ()
+  print('TAP version 13')
+end
+
 function _module.new (name)
   local instance = {
     _name = name;
-    _tests = {}
+    _tests = {};
   }
 
   return TestHarness(instance)
