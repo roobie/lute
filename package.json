@@ -1,0 +1,26 @@
+{
+  "name": "lute",
+  "version": "1.0.0",
+  "description": "Lua reusable stuff",
+  "main": "index.js",
+  "scripts": {
+    "test": "luajit _run_tests.lua",
+    "test:pretty": "luajit _run_tests.lua | tap-spec",
+    "test:pretty:watch": "nodemon -x \"npm run test:pretty\" -e lua",
+    "test:watch": "nodemon _run_tests.lua"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.19.1",
+    "tap-spec": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roobie/lute.git"
+  },
+  "bugs": {
+    "url": "https://github.com/roobie/lute/issues"
+  },
+  "homepage": "https://github.com/roobie/lute#readme"
+}

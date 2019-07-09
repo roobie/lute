@@ -1,0 +1,1 @@
+c:\apps\luajit\luajit.exe %*
