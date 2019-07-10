@@ -5,10 +5,10 @@ local Tap = require('tap')
 local fmt = require('fmt')
 local printf = fmt.printf
 
-local tap = Tap.new()
+local tap = Tap.new {name = 'quick_sort.lua'}
 
 tap:addTest(
-  'Quick sort 1',
+  'sort with default comparator',
   function (test)
     local t = {3, 8, 2, 4, 1, 5, 7, 6}
     quickSort(t)
@@ -24,7 +24,7 @@ local function gt (a, b)
 end
 
 tap:addTest(
-  'Quick sort 2',
+  'sort with specified comparator',
   function (test)
     local t = {3, 8, 2, 4, 1, 5, 7, 6}
     quickSort(t, gt)

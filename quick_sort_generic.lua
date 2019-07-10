@@ -1,3 +1,21 @@
+--[[
+
+  A generic quick sort implementation. It requires the collection passed in to
+  be sequential and sortable. It sorts the collection in place.
+
+  The required methods on the `collection` are:
+
+  -- compute the length of the collection
+  -- this does not use the #/__len meta event, because we are compatible with 5.1
+  :length() -> number
+
+  -- retrieve one element by its index
+  :get(integer) -> element
+
+  -- swap the elements that exist on the indices
+  :swap(integer, integer) -> nil
+
+]]
 
 local function partition (collection, lo, hi, comparator)
   local pivot = collection:get(hi)

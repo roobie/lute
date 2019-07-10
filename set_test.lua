@@ -5,10 +5,10 @@ local Tap = require('tap')
 local fmt = require('fmt')
 local printf = fmt.printf
 
-local tap = Tap.new()
+local tap = Tap.new {name = 'set.lua'}
 
 tap:addTest(
-  'Basic Set operations',
+  'basic operations',
   function (test)
     local set = Set.new()
     local a, b, c = {}, {}, {}
@@ -29,7 +29,7 @@ tap:addTest(
 end)
 
 tap:addTest(
-  'Set union',
+  'union',
   function (test)
     local s1, s2 = Set.new(), Set.new()
     local distinctItemsCount = 4
@@ -47,7 +47,7 @@ tap:addTest(
 end)
 
 tap:addTest(
-  'Set difference',
+  'difference',
   function (test)
     local s1, s2 = Set.new(), Set.new()
     local distinctItemsCount = 3
@@ -62,6 +62,25 @@ tap:addTest(
     test:equal(
       s3:size(),
       distinctItemsCount,
+      'The difference\'s size should be the sum of distinct items')
+end)
+
+tap:addTest(
+  'intersect',
+  function (test)
+    local s1, s2 = Set.new(), Set.new()
+    local distinctItemsCount = 3
+    local a, b, c = 1, 2, 3
+    -- item `b` is in both sets
+    s1:add(a):add(b)
+    s2:add(b):add(c)
+
+    test:equal(s1:size(), 2)
+    test:isTrue(s1:size() == s2:size(), 'The sets should be of equal size')
+    local s3 = s1:intersect(s2)
+    test:equal(
+      tostring(s3),
+      'Set(2)',
       'The difference\'s size should be the sum of distinct items')
 end)
 

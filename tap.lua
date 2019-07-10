@@ -5,9 +5,13 @@ local fmt = require('fmt')
 local printf = fmt.printf
 local prototype = require('prototype')
 
+local totalTestCount = 0
+local totalPassCount = 0
+local totalFailCount = 0
+
 local Test = prototype({
-  enter = function (self)
-    printf('# %s', self._name)
+  enter = function (self, suiteName)
+    printf('# %s%s', string.format('%s: ', suiteName) or ' ', self._name)
   end;
 
   exit = function (self)
@@ -15,8 +19,6 @@ local Test = prototype({
       if self._testCount ~= self._expectedTestCount then
         printf('not ok %d - expected %d tests', self._testCount + 1, self._expectedTestCount)
       end
-    else
-      printf('1..%d', self._testCount)
     end
   end;
 
@@ -29,21 +31,24 @@ local Test = prototype({
       -- TODO: cannot set this more than once
     end
     self._expectedTestCount = expectedTestCount
-    printf('%d..%d', 1, self._expectedTestCount)
+    -- printf('%d..%d', 1, self._expectedTestCount)
   end;
 
   check = function (self, args)
     self._testCount = self._testCount + 1
+    totalTestCount = totalTestCount + 1
     if not args.assertion() then
+      totalFailCount = totalFailCount + 1
       self._success = false
       printf('not ok %d %s', self._testCount, args.message)
       printf('  ---')
       args.printInfo()
       local tb = debug.traceback('', 2):sub(2)
       printf('  %s', tb)
-      printf('  ---')
+      printf('  ...')
       self._failCount = self._failCount + 1
     else
+      totalPassCount = totalPassCount + 1
       printf('ok %d %s', self._testCount, args.message)
     end
   end;
@@ -74,7 +79,21 @@ local Test = prototype({
         printf('  actual  : %s', inspect(actual))
       end;
     }
-  end
+  end;
+
+  isNil = function (self, actual, message)
+    self:check {
+      message = message or 'should be nil';
+      assertion = function ()
+        return actual == nil
+      end;
+      printInfo = function ()
+        printf('  operator: %s', 'isNil')
+        printf('  expected: %s', 'nil')
+        printf('  actual  : %s', inspect(actual))
+      end;
+    }
+  end;
 })
 
 function Test.new (name, testFunction)
@@ -101,11 +120,19 @@ local TestSuite = prototype({
   end;
   run = function (self)
     if self._name then
-      printf('# Suite: %s', self._name)
+      --printf('# Suite: %s', self._name)
     end
     for n, test in ipairs(self._tests) do
-      test:enter()
-      test._testFunction(test)
+      test:enter(self._name)
+      ok, err = pcall(function ()
+          test._testFunction(test)
+      end)
+      if not ok then
+        printf('not ok (error occured) %s', err)
+        printf('  ---')
+        printf('  %s', debug.traceback())
+        printf('  ...')
+      end
       test:exit()
     end
   end;
@@ -113,6 +140,13 @@ local TestSuite = prototype({
 
 function _module.printHeader ()
   print('TAP version 13')
+end
+function _module.printFooter ()
+  printf('1..%d', totalTestCount)
+  printf('# tests %d', totalTestCount)
+  printf('# pass %d', totalPassCount)
+  printf('# fail %d', totalFailCount)
+  printf('')
 end
 
 function _module.new (opts)

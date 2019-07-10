@@ -60,6 +60,17 @@ Set = prototype {
     return result
   end;
 
+  intersect = function (self, other)
+    local result = Set.new()
+    for k in self:iter() do
+      if other:has(k) then
+        result:add(k)
+      end
+    end
+
+    return result
+  end;
+
   iter = function (self)
     return pairs(self._data)
   end;

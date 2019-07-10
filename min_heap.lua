@@ -6,7 +6,7 @@
 ]]
 
 local prototype = require('prototype')
-local List = require('linked_list')
+local List = require('table_list')
 
 local MinHeap
 
@@ -21,9 +21,9 @@ MinHeap = prototype {
     else
       local subheaps = self._subheaps:map(tostring)
       local rest = ''
-      for i, h in ipairs(subheaps) do
+      for i, h in subheaps:iter() do
         rest = rest..h
-        if i < #subheaps then
+        if i < subheaps:length() then
           rest = rest..', '
         end
       end

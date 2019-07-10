@@ -1,11 +1,11 @@
-local List = require('linked_list')
+local List = require('table_list')
 
 local Tap = require('tap')
 local inspect = require('inspect')
 local fmt = require('fmt')
 local printf = fmt.printf
 
-local tap = Tap.new { name = 'linked_list.lua' }
+local tap = Tap.new { name = 'table_list.lua' }
 
 tap:addTest(
   'List.__tostring',
@@ -15,43 +15,11 @@ tap:addTest(
 end)
 
 tap:addTest(
-  'List.insertAfterNode',
-  function (test)
-    local l = List.new {1, 2, 3}
-    l:insertAfterNode(l._head, List.Node.new(9))
-    test:equal(tostring(l), 'List(1, 9, 2, 3)')
-end)
-
-tap:addTest(
-  'List.prependNode',
-  function (test)
-    local l = List.new {1, 2, 3}
-    l:prependNode(List.Node.new(9))
-    test:equal(tostring(l), 'List(9, 1, 2, 3)')
-end)
-
-tap:addTest(
   'List.prepend',
   function (test)
     local l = List.new {1, 2, 3}
     l:prepend(9)
     test:equal(tostring(l), 'List(9, 1, 2, 3)')
-end)
-
-tap:addTest(
-  'List.removeAfterNode',
-  function (test)
-    local l = List.new {1, 2, 3}
-    l:removeAfterNode(l._head)
-    test:equal(tostring(l), 'List(1, 3)')
-end)
-
-tap:addTest(
-  'List.removeFirstNode',
-  function (test)
-    local l = List.new {1, 2, 3}
-    l:removeFirstNode()
-    test:equal(tostring(l), 'List(2, 3)')
 end)
 
 tap:addTest(
@@ -87,9 +55,6 @@ tap:addTest(
         return n + 1
     end)
     test:equal(tostring(l2), 'List(2, 3, 4)')
-    l2._head._element = 9
-    l2._head._next._element = 8
-    test:equal(tostring(l2), 'List(9, 8, 4)')
     test:equal(tostring(l), 'List(1, 2, 3)')
 end)
 
@@ -102,13 +67,38 @@ tap:addTest(
 
     local l1 = List.new {2, 3}
     local l2 = List.cons(1, l1)
-    l1._head._element = 9
-    test:equal(tostring(l1), 'List(9, 3)')
+    test:equal(tostring(l1), 'List(2, 3)')
     test:equal(tostring(l2), 'List(1, 2, 3)')
-    l2:removeFirstNode()
-    l2:removeFirstNode()
-    test:equal(tostring(l1), 'List(9, 3)')
+    test:equal(l2:shift(), 1)
+    test:equal(l2:shift(), 2)
+    test:equal(tostring(l1), 'List(2, 3)')
     test:equal(tostring(l2), 'List(3)')
+    test:equal(l2:shift(), 3)
+    test:equal(tostring(l2), 'List()')
+    test:equal(tostring(l2), 'List()')
+    test:equal(tostring(l2), 'List()')
+end)
+
+tap:addTest(
+  'List: Random access',
+  function (test)
+    local l = List.new {1, 2, 3}
+    test:equal(l:length(), 3)
+    test:equal(l:first(), 1)
+    test:equal(l:first(), l[1])
+    test:equal(l[2], 2)
+    test:equal(l[2], l:get(2))
+    test:equal(l:skip(1)[1], 2)
+
+    test:equal(List.cons(11, l):get(1), 11)
+end)
+
+tap:addTest(
+  'List: sorting',
+  function (test)
+    local l = List.new {4, 1, 3, 5, 2}
+    l:sortInPlace()
+    test:equal(tostring(l), 'List(1, 2, 3, 4, 5)')
 end)
 
 tap:run()
