@@ -57,6 +57,10 @@ function List.append (self, element)
   self[#self + 1] = element
 end
 
+function List.pop (self)
+  return table.remove(self, #self)
+end
+
 function List.map (self, transform)
   if self:isEmpty() then
     return List.new()

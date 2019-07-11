@@ -94,6 +94,62 @@ local Test = prototype({
       end;
     }
   end;
+
+  isGt = function (self, actual, expected, message)
+    self:check {
+      message = message or 'should be greater than';
+      assertion = function ()
+        return actual > expected
+      end;
+      printInfo = function ()
+        printf('  operator: %s', 'isGt')
+        printf('  expected: %s', inspect(expected))
+        printf('  actual  : %s', inspect(actual))
+      end;
+    }
+  end;
+
+  isLt = function (self, actual, expected, message)
+    self:check {
+      message = message or 'should be less than';
+      assertion = function ()
+        return actual < expected
+      end;
+      printInfo = function ()
+        printf('  operator: %s', 'isLt')
+        printf('  expected: %s', inspect(expected))
+        printf('  actual  : %s', inspect(actual))
+      end;
+    }
+  end;
+
+  isGte = function (self, actual, expected, message)
+    self:check {
+      message = message or 'should be greater than or equal';
+      assertion = function ()
+        return actual >= expected
+      end;
+      printInfo = function ()
+        printf('  operator: %s', 'isGte')
+        printf('  expected: %s', inspect(expected))
+        printf('  actual  : %s', inspect(actual))
+      end;
+    }
+  end;
+
+  isLte = function (self, actual, expected, message)
+    self:check {
+      message = message or 'should be less than or equal';
+      assertion = function ()
+        return actual <= expected
+      end;
+      printInfo = function ()
+        printf('  operator: %s', 'isLte')
+        printf('  expected: %s', inspect(expected))
+        printf('  actual  : %s', inspect(actual))
+      end;
+    }
+  end;
 })
 
 function Test.new (name, testFunction)

@@ -6,10 +6,11 @@ local quickSort = require('quick_sort_generic')
 
   This is an implementation of the List abstract data type. It is a circular
   doubly linked list, so appending and prepending are O(1) operations. The
-  length of the list is eagerly computed, so reading that state is also O(1).
-  However, removing and inserting items are linear in time complexity: O(n)
-  because of a linear search to find the element to insert after or remove.
-  Reverse operations are supported.
+  length of the list is cached, so reading that state is also O(1). However,
+  removing and inserting items are linear in time complexity: O(n) because of a
+  linear search to find the element to insert after or remove. Reverse
+  operations are supported and have the same time complexity as forward
+  operations.
 
   It is implemented with "external" structures (node elements), so the elements
   that are stored in it are _not_ mutated by the data structure. This is worse
@@ -18,8 +19,10 @@ local quickSort = require('quick_sort_generic')
 
   Reasons for using this would be to allow for efficient appending or prepending
   of items, when random access is not as important. Because it is circular, it
-  can be thought of as a "ring" that supports moving the head efficiently. Also
-  works nicely if reverse iteration is needed.
+  can be thought of as a "ring" that supports moving the head efficiently both
+  forwards and backwards. Also works nicely if reverse iteration is needed.
+
+  This data structure would fit nicely when implementing a Queue or a Stack.
 
 ]]
 

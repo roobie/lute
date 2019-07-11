@@ -4,17 +4,20 @@ local Tap = require('tap')
 local fmt = require('fmt')
 local printf = fmt.printf
 
-local tap = Tap.new()
+local tap = Tap.new {name='min_heap.lua'}
 
-tap:addTest(function (test)
+tap:addTest(
+  'basic operations',
+  function (test)
     local heapData = {
       {20, 'b'};
       {30, 'c'};
       {10, 'a'};
       {15, 'd'};
     }
-    printf('# %s', MinHeap.empty)
+
     test:equal(tostring(MinHeap.empty), 'MinHeap(Empty)')
+
     local minh = MinHeap.from(heapData)
     test:equal(
       tostring(minh),

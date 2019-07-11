@@ -57,4 +57,8 @@ function strings.iter (str)
   end
 end
 
+function strings.join (tbl, separator)
+  return table.concat(tbl, separator)
+end
+
 return strings

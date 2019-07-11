@@ -45,12 +45,10 @@ MinHeap = prototype {
   end;
   peek = function (self)
     if self:isEmpty() then
-      error('This heap is empty, so cannot pop an element.')
+      error('This heap is empty, so cannot peek.')
     else
       return self._element
     end
-  end;
-  length = function (self)
   end;
   meld = function (self, heap2)
     if self:isEmpty() then
@@ -78,7 +76,6 @@ MinHeap = prototype {
 
 function MinHeap.new (priority, element, subheaps)
   local instance = MinHeap {
-    _isEmpty = isEmpty;
     _priority = priority;
     _element = element;
     _subheaps = subheaps or List.new();

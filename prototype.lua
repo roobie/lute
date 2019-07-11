@@ -23,6 +23,9 @@ local function prototype (definition)
   }
   local proto = definition or {}
   proto.__index = proto
+  function proto.isa (self)
+    return getmetatable(self) == proto
+  end
   return setmetatable(proto, mmt)
 end
 
