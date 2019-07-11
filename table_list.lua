@@ -115,6 +115,10 @@ function List.first (self)
   return self:get(1)
 end
 
+function List.last (self)
+  return self:get(#self)
+end
+
 List.__index = function (self, key)
   if type(key) == 'number' then
     return self:get(key)

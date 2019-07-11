@@ -81,6 +81,20 @@ local Test = prototype({
     }
   end;
 
+  isFalse = function (self, actual, message)
+    self:check {
+      message = message or 'should be false';
+      assertion = function ()
+        return actual == false
+      end;
+      printInfo = function ()
+        printf('  operator: %s', 'isFalse')
+        printf('  expected: %s', false)
+        printf('  actual  : %s', inspect(actual))
+      end;
+    }
+  end;
+
   isNil = function (self, actual, message)
     self:check {
       message = message or 'should be nil';

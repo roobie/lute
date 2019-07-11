@@ -15,10 +15,12 @@ local ok, err = pcall(function ()
       require('strings_test');
       require('func_test');
       require('collections_test');
-      require('prototype_test');
       require('tables_test');
       require('curried_test');
       require('max_heap_test');
+      require('prototype_test');
+      require('avl_tree_test');
+      require('randy_test');
     }
 end)
 
