@@ -35,4 +35,4 @@ tap:addTest(
     test:equal(acc, '87654321', 'sorted')
 end)
 
-tap:run()
+return tap

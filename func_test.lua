@@ -70,4 +70,4 @@ tap:addTest(
     test:equal(table.concat(F.collect2(iter), ':'), '2:3:4')
 end)
 
-tap:run()
+return tap

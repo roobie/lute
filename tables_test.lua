@@ -1,5 +1,5 @@
 local tables = require('tables')
-local Atable = require('augmented_table')
+local quickSort = require('quick_sort')
 local Tap = require('tap')
 local inspect = require('inspect')
 
@@ -35,10 +35,10 @@ tap:addTest(
 end)
 
 tap:addTest(
-  'tables.imap',
+  'tables.map',
   function (test)
     local at = tables {1, 2}
-    local r = at:imap(function (n)
+    local r = at:map(function (n)
         return n + 1
     end)
     test:equal(table.concat(r, ','), '2,3')
@@ -75,7 +75,7 @@ end)
 tap:addTest(
   'tables.merge',
   function (test)
-    local t = Atable {a=1}
+    local t = tables {a=1}
     local a = {a=2}
     local b = {b=3}
     local c = {c=4}
@@ -86,26 +86,14 @@ tap:addTest(
     test:equal(t:merge(a, b).b, 3)
     test:equal(t:merge(a, b, c).b, 3)
 
-    local merged = t:merge(a, b, c):map(function (e, k) return {k, e} end)
-    merged:qsort(function (a, b) return a[1] < b[1] end)
-    test:isTrue(type(merged) == 'table')
-    test:isTrue(merged:isa(Atable))
-    -- local str = tables.reduce(merged,
+    local merged = tables.merge(t, a, b, c)
+    merged = tables.map(merged, function (e, k) return {k, e} end)
+    quickSort(merged, function (a, b) return a[1] < b[1] end)
     local function reducer (s, e, k)
       return s..tostring(e[1])..':'..tostring(e[2])..','
     end
     local str = tables.reduce(merged, reducer, '')
     test:equal(str, 'a:2,b:3,c:4,')
-end)
-
-tap:addTest(
-  'Atable.imap',
-  function (test)
-    local t = Atable {1,2,3}
-    local m = t:imap(function (v) return v + 1 end)
-    for i, v in ipairs(m) do
-      test:equal(i + 1, v)
-    end
 end)
 
 tap:addTest(
@@ -124,4 +112,4 @@ tap:addTest(
     test:equal(v, 'NOTFOUND')
 end)
 
-tap:run()
+return tap

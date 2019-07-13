@@ -37,4 +37,4 @@ tap:addTest(
     test:equal(acc[6], 'd')
 end)
 
-tap:run()
+return tap

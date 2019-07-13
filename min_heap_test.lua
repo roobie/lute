@@ -35,4 +35,4 @@ tap:addTest(
 
 end)
 
-tap:run()
+return tap

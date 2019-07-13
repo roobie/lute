@@ -36,4 +36,4 @@ tap:addTest(
     test:isTrue(math.abs(sum - 150) < 2, tostring(sum))
 end)
 
-tap:run()
+return tap

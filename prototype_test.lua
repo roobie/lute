@@ -62,4 +62,4 @@ tap:addTest(
     test:isFalse(instance:isa(Type))
 end)
 
-tap:run()
+return tap

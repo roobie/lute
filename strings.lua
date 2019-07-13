@@ -61,4 +61,24 @@ function strings.join (tbl, separator)
   return table.concat(tbl, separator)
 end
 
+function strings.padr (str, length, char)
+  str = tostring(str)
+  local diff = length - #str
+  if diff > 0 then
+    return str..string.rep(char, diff)
+  end
+
+  return str
+end
+
+function strings.padl (str, length, char)
+  str = tostring(str)
+  local diff = length - #str
+  if diff > 0 then
+    return string.rep(char, diff)..str
+  end
+
+  return str
+end
+
 return strings

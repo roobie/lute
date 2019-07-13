@@ -11,9 +11,9 @@ tap:addTest(
 end)
 
 tap:addTest(
-  'curried.imap',
+  'curried.map',
   function (test)
-    local addOne = C.imap(function (n) return n + 1 end)
+    local addOne = C.map(function (n) return n + 1 end)
     local n = addOne {1, 2, 3}
     test:equal(n[1], 2)
     test:equal(n[2], 3)
@@ -21,12 +21,12 @@ tap:addTest(
 end)
 
 tap:addTest(
-  'curried.imap',
+  'curried.filter',
   function (test)
-    local onlyEvens = C.ifilter(function (n) return n % 2 == 0 end)
+    local onlyEvens = C.filter(function (n) return n % 2 == 0 end)
     local n = onlyEvens {1, 2, 3, 4}
     test:equal(n[1], 2)
     test:equal(n[2], 4)
 end)
 
-tap:run()
+return tap

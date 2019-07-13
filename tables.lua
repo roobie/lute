@@ -16,48 +16,47 @@ function tables.partition (tbl, partsize)
   return result
 end
 
-function tables.imap (tbl, transform)
-  local result = {}
-  for i, e in ipairs(tbl) do
-    result[#result + 1] = transform(e, i)
-  end
-
-  return result
-end
-
 function tables.map (tbl, transform)
   local result = {}
-  for k, e in pairs(tbl) do
-    result[#result + 1] = transform(e, k)
+  if #tbl == 0 then
+    for k, e in pairs(tbl) do
+      result[#result + 1] = transform(e, k)
+    end
+  else
+    for i, e in ipairs(tbl) do
+      result[#result + 1] = transform(e, i)
+    end
   end
-
   return result
 end
 
 function tables.reduce (tbl, reducer, init)
-  for k, e in pairs(tbl) do
-    init = reducer(init, e, k)
+  if #tbl == 0 then
+    for k, e in pairs(tbl) do
+      init = reducer(init, e, k)
+    end
+  else
+    for i, e in ipairs(tbl) do
+      init = reducer(init, e, i)
+    end
   end
 
   return init
 end
 
-function tables.ifilter (tbl, predicate)
-  local result = {}
-  for i, e in ipairs(tbl) do
-    if predicate(e, i) then
-      result[#result + 1] = e
-    end
-  end
-
-  return result
-end
-
 function tables.filter (tbl, predicate)
   local result = {}
-  for k, e in pairs(tbl) do
-    if predicate(e, k) then
-      result[#result + 1] = e
+  if #tbl == 0 then
+    for k, e in pairs(tbl) do
+      if predicate(e, k) then
+        result[#result + 1] = e
+      end
+    end
+  else
+    for i, e in ipairs(tbl) do
+      if predicate(e, i) then
+        result[#result + 1] = e
+      end
     end
   end
 

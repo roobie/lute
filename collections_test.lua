@@ -23,4 +23,4 @@ tap:addTest(
     void(t % print)
 end)
 
-tap:run()
+return tap

@@ -111,4 +111,4 @@ tap:addTest(
     test:equal(tostring(l2), 'List(3)')
 end)
 
-tap:run()
+return tap

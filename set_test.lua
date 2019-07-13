@@ -84,4 +84,4 @@ tap:addTest(
       'The difference\'s size should be the sum of distinct items')
 end)
 
-tap:run()
+return tap

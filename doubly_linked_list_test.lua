@@ -144,17 +144,22 @@ tap:addTest(
     l:add(1)
     test:equal(l:length(), 1)
     test:equal(l:first(), 1)
-    test:equal(l:last(), nil)
+    test:equal(l:last(), 1)
     l:add(2)
     test:equal(l:last(), 2)
     l:removeAt(2)
-    test:equal(l:last(), nil)
+    test:equal(l:last(), 1)
     test:equal(l:first(), 1)
     l:add(2)
     test:equal(l:last(), 2)
     l:swap(1, 2)
     test:equal(l:first(), 2)
     test:equal(l:last(), 1)
+    test:isTrue(l:contains(1))
+
+    l:insertAt(l:length()+1, 3)
+    test:isTrue(l:contains(3))
+    test:equal(tostring(l), 'List(2, 1, 3)')
 end)
 
 tap:addTest(
@@ -200,4 +205,4 @@ tap:addTest(
     test:equal(tostring(l), 'List(2, 3, 4, 1)')
 end)
 
-tap:run()
+return tap

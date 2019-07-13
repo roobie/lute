@@ -194,15 +194,16 @@ local TestSuite = prototype({
     end
     for n, test in ipairs(self._tests) do
       test:enter(self._name)
-      ok, err = pcall(function ()
+      ok = xpcall(
+        function ()
           test._testFunction(test)
+        end, function (err)
+          printf('not ok (error occured) %s', err)
+          printf('  ---')
+          printf('  %s', debug.traceback())
+          printf('  ...')
+          totalFailCount = totalFailCount + 1
       end)
-      if not ok then
-        printf('not ok (error occured) %s', err)
-        printf('  ---')
-        printf('  %s', debug.traceback())
-        printf('  ...')
-      end
       test:exit()
     end
   end;

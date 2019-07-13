@@ -12,16 +12,16 @@ function curried.reduce (fn)
 end
 
 -- (a -> b) -> Listof a -> Listof b
-function curried.imap (fn)
+function curried.map (fn)
   return function (tbl)
-    return tables.imap(tbl, fn)
+    return tables.map(tbl, fn)
   end
 end
 
 -- (a -> boolean) -> Listof a -> Listof a
-function curried.ifilter (fn)
+function curried.filter (fn)
   return function (tbl)
-    return tables.ifilter(tbl, fn)
+    return tables.filter(tbl, fn)
   end
 end
 
