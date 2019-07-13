@@ -28,7 +28,7 @@
   assert(not t:has {key = 2})
 ]]
 
-local prototype = require('prototype')
+local prototype = require('lute.prototype')
 
 local Node = {
   _balance = 0;

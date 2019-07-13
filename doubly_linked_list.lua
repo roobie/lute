@@ -1,9 +1,9 @@
-local prototype = require('prototype')
+local prototype = require('lute.prototype')
 
 -- for sortInPlace
-local quickSort = require('quick_sort_generic')
+local quickSort = require('lute.quick_sort_generic')
 -- for sort
-local quickSortTable = require('quick_sort')
+local quickSortTable = require('lute.quick_sort')
 
 --[[
 
@@ -107,7 +107,6 @@ end
 -- Returns a generator which will yield [i, e], where `i` is the index (1-based)
 -- and `e` is the element at index `i`.
 function List.iter (self)
-  self._iterating = true
   local currentNode = self._head
   local index = 0
   return function ()
@@ -116,8 +115,6 @@ function List.iter (self)
       local result = currentNode
       currentNode = currentNode._nextNode
       return index, result._element
-    else
-      self._iterating = false
     end
   end
 end
@@ -131,15 +128,12 @@ function List.iterReverse (self)
 
   local currentNode = self._head._prevNode
   local index = self:length()
-  self._iterating = true
   return function ()
     if index >= 1 then
       index = index - 1
       local result = currentNode
       currentNode = currentNode._prevNode
       return index, result._element
-    else
-      self._iterating = false
     end
   end
 end
@@ -173,10 +167,6 @@ end
 
 -- Appends an element to the end of the list.
 function List.append (self, element)
-  if self._iterating then
-    error('Cannot mutate while iterating.')
-  end
-
   local newNode = Node.new(element)
   if self._head == nil then
     self._head = newNode
@@ -238,10 +228,6 @@ end
 
 -- Removes the first node from the list whose element is equal to `element`
 function List.remove (self, element)
-  if self._iterating then
-    error('Cannot mutate while iterating.')
-  end
-
   local reference = self:find(element)
   if reference ~= nil then
     local p, n = reference._prevNode, reference._nextNode
@@ -258,6 +244,8 @@ function List.remove (self, element)
     if n ~= nil then
       n._prevNode = p
     end
+    reference._prevNode = nil
+    reference._nextNode = nil
 
     self._length = self._length - 1
     return true
@@ -268,10 +256,6 @@ end
 
 -- Removes the node at `index`
 function List.removeAt (self, index)
-  if self._iterating then
-    error('Cannot mutate while iterating.')
-  end
-
   local reference = self:findAt(index)
   if reference ~= nil then
     local p, n = reference._prevNode, reference._nextNode
@@ -288,11 +272,37 @@ function List.removeAt (self, index)
     if n ~= nil then
       n._prevNode = p
     end
+    reference._prevNode = nil
+    reference._nextNode = nil
 
     self._length = self._length - 1
     return true
   else
     return false
+  end
+end
+
+function List.pop (self)
+  if self:isEmpty() then
+    return nil
+  end
+  local element = self._head._element
+  self:removeAt(1)
+  return element
+end
+
+function List.popLast (self)
+  if self:isEmpty() then
+    return nil
+  elseif self:length() == 1 then
+    return self:pop()
+  else
+    local node = self._head._prevNode
+    node._prevNode._nextNode = self._head
+    self._head._prevNode = node._prevNode
+    node._prevNode = nil
+    node._nextNode = nil
+    return node._element
   end
 end
 
@@ -309,10 +319,6 @@ end;
 -- Inserts an element in a new node at `index`, if the index is in the interval
 -- [1,#list+1]
 function List.insertAt(self, index, element)
-  if self._iterating then
-    error('Cannot mutate while iterating.')
-  end
-
   if self._length == 0 and index == 1 then
     self._head = Node.new(element)
     self._length = 1
@@ -434,7 +440,7 @@ end
 -- is a table, all (ipairs) elements of the table will be appended in order to
 -- the new list
 function List.new (elements) local list = List {
-_length = 0; _head = nil; _iterating = false; }
+_length = 0; _head = nil; }
 
   if type(elements) == 'table' then
     for _, element in ipairs(elements) do

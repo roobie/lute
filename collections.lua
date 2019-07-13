@@ -1,9 +1,3 @@
-local inspect = require('inspect')
-local prototype = require('prototype')
-
-local List = require('linked_list')
-local MinHeap = require('min_heap')
-
 --[[
   Collections
 
@@ -38,25 +32,4 @@ local MinHeap = require('min_heap')
   __concat - Concatenation. Invoked similar to addition, using the '..' operator.
 
 ]]
-
-local Queue = prototype {
-    __len = function (self)
-      return #self._data
-    end;
-    push = function (self, element)
-      table.insert(self._data, element)
-    end;
-    peek = function (self)
-      return self._data[#self]
-    end;
-    pop = function (self)
-      local result = self._data[#self]
-      self._data[#self] = nil
-      return result
-    end;
-}
-
-return {
-  List = List;
-  MinHeap = MinHeap;
-}
+return {}

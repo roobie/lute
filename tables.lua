@@ -1,5 +1,5 @@
-local prototype = require('prototype')
-local strings = require('strings')
+local prototype = require('lute.prototype')
+local strings = require('lute.strings')
 
 local tables = prototype {}
 
@@ -20,7 +20,7 @@ function tables.map (tbl, transform)
   local result = {}
   if #tbl == 0 then
     for k, e in pairs(tbl) do
-      result[#result + 1] = transform(e, k)
+      result[k] = transform(e, k)
     end
   else
     for i, e in ipairs(tbl) do
@@ -49,7 +49,7 @@ function tables.filter (tbl, predicate)
   if #tbl == 0 then
     for k, e in pairs(tbl) do
       if predicate(e, k) then
-        result[#result + 1] = e
+        result[k] = e
       end
     end
   else

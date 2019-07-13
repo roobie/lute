@@ -5,6 +5,20 @@
 Some items here are from other repos - will make them submodules or something in
 the future.
 
+# General usage and information
+
+This library is intended to be used as a git submodule, so when using it in your projects you would go to your source folder and invoke git somewhat like this:
+
+`git submodule add https://github.com/roobie/lute lute`
+
+and then
+
+`git submodule --init --recursive`
+
+which will then allow you to
+
+`local MOD = require('lute.MOD')`
+
 # Source code
 
 ## Programming style

@@ -2,6 +2,7 @@ local tables = require('tables')
 local quickSort = require('quick_sort')
 local Tap = require('tap')
 local inspect = require('inspect')
+local List = require('table_list')
 
 local tap = Tap.new {name = 'tables.lua'}
 
@@ -86,9 +87,14 @@ tap:addTest(
     test:equal(t:merge(a, b).b, 3)
     test:equal(t:merge(a, b, c).b, 3)
 
-    local merged = tables.merge(t, a, b, c)
-    merged = tables.map(merged, function (e, k) return {k, e} end)
-    quickSort(merged, function (a, b) return a[1] < b[1] end)
+    local merged = t:merge(a, b, c)
+    merged = tables.reduce(
+      merged,
+      function (out, e, k)
+        return List.cons({k, e}, out)
+      end,
+      List.new())
+    merged:sortInPlace(function (a, b) return a[1] < b[1] end)
     local function reducer (s, e, k)
       return s..tostring(e[1])..':'..tostring(e[2])..','
     end
