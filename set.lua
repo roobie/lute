@@ -80,17 +80,23 @@ Set = prototype {
   end;
 }
 
-function Set.new (elements)
-  local instance = Set {
+function Set.new ()
+  return Set {
     _size = 0;
     _data = {};
   }
+end
 
-  for _, v in ipairs(elements or {}) do
-    instance:add(v)
+function Set.from (elements)
+  local set = Set.new()
+
+  if type(elements) == 'table' and #elements > 0 then
+    for _, v in ipairs(elements) do
+      set:add(v)
+    end
   end
 
-  return instance
+  return set
 end
 
 return Set

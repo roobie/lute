@@ -29,6 +29,12 @@ tap:addTest(
 end)
 
 tap:addTest(
+  'Set.from',
+  function (test)
+    test:equal(Set.from({1,1,2,1}):size(), 2)
+end)
+
+tap:addTest(
   'union',
   function (test)
     local s1, s2 = Set.new(), Set.new()

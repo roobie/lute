@@ -92,5 +92,33 @@ end
 function func.gte (a, b)
   return a >= b
 end
+function func.eq (a, b)
+  return a == b
+end
+
+function func.divisible (a, b)
+  return a % b == 0
+end
+
+--- conditional logic
+--- @example
+--- local e = func.cond {
+---   {func.eq; 'equal'};
+---   {func.divisible; 'divisible'};
+---   'unknown'
+--- }
+--- return e(10, 5)
+function func.cond (tbl)
+  local branchCount = #tbl
+  local elseBranch = tbl[branchCount]
+  return function (...)
+    for i = 1, branchCount - 1 do
+      if tbl[i][1](...) then
+        return tbl[i][2]
+      end
+    end
+    return elseBranch
+  end
+end
 
 return func

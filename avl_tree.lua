@@ -165,7 +165,7 @@ function Tree.delete (self, key)
 end
 
 function Tree.insert (self, key, value)
-  assert(
+  assert( -- FIXME this raises an error instead of the assertion failing.
     type(self._comparator(key, key)) == 'number',
     "The tree's comparator function must be able to order the keys")
   self._root = insert(self, self._root, key, value)

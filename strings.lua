@@ -1,3 +1,4 @@
+local F = require('lute.func')
 
 local strings = {}
 
@@ -9,6 +10,8 @@ local EMPTYSTRING = ''
 
   @parameter [separator] <string/regex> - What to split by. Defaults to %s
   (whitespace).
+
+  @returns a table with the elements from splitting the string.
 
 ]]
 function strings.split (str, separator)
@@ -79,6 +82,168 @@ function strings.padl (str, length, char)
   end
 
   return str
+end
+
+function strings.isEmpty (str)
+  return #str == 0
+end
+
+function strings.isBlank (str)
+  if strings.isEmpty(str) then
+    return true
+  end
+
+  local isWhitespaceOnly = (string.find(str, '[^%s]')) == nil
+  return isWhitespaceOnly
+end
+
+function strings.trimStart (str)
+  return string.gsub(str, '^%s', '')
+end
+
+function strings.trimEnd (str)
+  return string.gsub(str, '%s$', '')
+end
+
+strings.trim = F.compose(strings.trimStart, strings.trimEnd)
+
+-- Ported from https://github.com/gustf/js-levenshtein (MIT)
+function strings.levenshteinDistance (a, b)
+  local function _min (d0, d1, d2, bx, ay)
+    if d0 < d1 or d2 < d1 then
+      if d0 > d2 then
+        return d2 + 1
+      else
+        return d0 + 1
+      end
+    else
+      if bx == ay then
+        return d1
+      else
+        return d1 + 1
+      end
+    end
+  end
+
+  local function distance (a, b)
+    -- identical strings means 0 edit distance
+    if a == b then
+      return 0
+    end
+
+    -- make sure that a is the shortest string
+    if string.len(a) > string.len(b) then
+      local tmp = a
+      a = b
+      b = tmp
+    end
+
+    local la = string.len(a)
+    local lb = string.len(b)
+
+    -- check each char in the string from back to front and decrease the length
+    -- if they are the same
+    while la > 1 and (string.byte(a, la) == string.byte(b, lb)) do
+      la = la - 1
+      lb = lb - 1
+    end
+
+    -- check each char from front to back and increase the offset by one for
+    -- each match
+    local offset = 1
+    while offset < la and (string.byte(a, offset) == string.byte(b, offset)) do
+      offset = offset + 1
+    end
+
+    -- adjust the length according to the offset
+    la = la - offset;
+    lb = lb - offset;
+
+    -- if the length of a is zero, we know that the length of b is the edit distance.
+    if la == 0 or lb < 3 then
+      return lb
+    end
+
+    local x = 0, y,
+    d0, d1, d2, d3, dd, dy, ay,
+    bx0, bx1, bx2, bx3
+
+    local vector = {}
+
+    for y = 1, la do
+      table.insert(vector, y);
+      table.insert(vector, string.byte(a, offset + y));
+    end
+
+    local len = #vector
+
+    while x <= lb - 3 do
+      d0 = x
+      bx0 = string.byte(b, offset + d0)
+      d1 = x + 1
+      bx1 = string.byte(b, offset + d1)
+      d2 = x + 2
+      bx2 = string.byte(b, offset + d2)
+      d3 = x + 3
+      bx3 = string.byte(b, offset + d3)
+      x = x + 4
+      dd = x
+
+      for y = 1, len, 2 do
+        dy = vector[y];
+        ay = vector[y + 1];
+        d0 = _min(dy, d0, d1, bx0, ay);
+        d1 = _min(d0, d1, d2, bx1, ay);
+        d2 = _min(d1, d2, d3, bx2, ay);
+        dd = _min(d2, d3, dd, bx3, ay);
+        vector[y] = dd;
+        d3 = d2;
+        d2 = d1;
+        d1 = d0;
+        d0 = dy;
+      end
+    end
+
+    while x <= lb do
+      d0 = x
+      bx0 = string.byte(b, offset + d0)
+      x = x + 1
+      dd = x
+      for y = 1, len, 2 do
+        dy = vector[y]
+        dd = _min(dy, d0, dd, bx0, vector[y + 1])
+        vector[y] = dd
+        d0 = dy
+      end
+    end
+
+    return dd
+  end
+
+  return distance(a, b)
+end
+
+function strings.startsWith (str, substr)
+  return (string.find(str, string.format('^%s', substr)) ~= nil)
+end
+
+function strings.endsWith (str, substr)
+  return (string.find(str, string.format('%s$', substr)) ~= nil)
+end
+
+function strings.compare (a, b)
+  if     a < b then return -1
+  elseif a > b then return  1
+  else              return  0
+  end
+end
+
+local template = {}
+strings.template = template
+--- @example:
+--- strings.interpolate('Hello %[name:uppercase], you are 100% awesome!', {name='World'})
+function template.interpolate (template, data)
+  
 end
 
 return strings

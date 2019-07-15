@@ -2,6 +2,8 @@ local strings = require('strings')
 local Tap = require('tap')
 local inspect = require('inspect')
 
+local StopWatch = require('stopwatch')
+
 local function dump (what)
   print(inspect(what))
 end
@@ -35,6 +37,83 @@ tap:addTest(
     test:equal(acc[4], 'c')
     test:equal(acc[5], ' ')
     test:equal(acc[6], 'd')
+end)
+
+tap:addTest(
+  'strings.padr',
+  function (test)
+    test:equal(strings.padr('1', 1, '0'), '1')
+    test:equal(strings.padr('1', 2, '0'), '10')
+    test:equal(strings.padr('1', -1, '0'), '1')
+    test:equal(strings.padr('1', 4, '0'), '1000')
+end)
+
+tap:addTest(
+  'strings.padl',
+  function (test)
+    test:equal(strings.padl('1', 1, '0'), '1')
+    test:equal(strings.padl('1', 2, '0'), '01')
+    test:equal(strings.padl('1', -1, '0'), '1')
+    test:equal(strings.padl('1', 4, '0'), '0001')
+end)
+
+tap:addTest(
+  'strings.isEmpty',
+  function (test)
+    test:isTrue(strings.isEmpty(''))
+    test:isFalse(strings.isEmpty('a'))
+end)
+
+tap:addTest(
+  'strings.isBlank',
+  function (test)
+    test:isTrue(strings.isBlank(''))
+    test:isTrue(strings.isBlank(' '))
+    test:isTrue(strings.isBlank('\n\r\t '))
+    test:isFalse(strings.isBlank(' a'))
+    test:isFalse(strings.isBlank(' _ \n'))
+end)
+
+tap:addTest(
+  'strings.trim',
+  function (test)
+    test:equal(strings.trimStart(' a '), 'a ')
+    test:equal(strings.trimEnd(' a '), ' a')
+    test:equal(strings.trim(' a '), 'a')
+    test:equal(strings.trim('\na\n'), 'a')
+end)
+
+tap:addTest(
+  'strings.levenshteinDistance',
+  function (test)
+    test:equal(strings.levenshteinDistance('hello', 'helo'), 1)
+    test:equal(strings.levenshteinDistance('helo', 'hello'), 1)
+    test:equal(strings.levenshteinDistance('abc', 'cba'), 2)
+    test:equal(strings.levenshteinDistance('thing', 'ahnt'), 3)
+    test:equal(strings.levenshteinDistance('aaaa', 'bbbb'), 4)
+    test:equal(strings.levenshteinDistance('local', 'qwert'), 5)
+    test:equal(strings.levenshteinDistance('aaabbbccc', 'qqqbbbyyy'), 6)
+end)
+
+tap:addTest(
+  'strings.startsWith',
+  function (test)
+    test:isTrue(strings.startsWith('abcdef', 'abc'))
+    test:isFalse(strings.startsWith('abcdef', 'bcd'))
+    test:isFalse(strings.startsWith('\nabcdef', 'abcd'))
+end)
+
+tap:addTest(
+  'strings.endsWith',
+  function (test)
+    test:isTrue(strings.endsWith('abcdef', 'def'))
+    test:isFalse(strings.endsWith('abcdef', 'cde'))
+    test:isFalse(strings.endsWith('abcdef\n', 'def'))
+end)
+
+tap:addTest(
+  'strings.XYZ',
+  function (test)
 end)
 
 return tap
