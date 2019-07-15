@@ -1,6 +1,7 @@
 local strings = require('strings')
 local Tap = require('tap')
 local inspect = require('inspect')
+local fmt = require('fmt')
 
 local StopWatch = require('stopwatch')
 
@@ -109,6 +110,55 @@ tap:addTest(
     test:isTrue(strings.endsWith('abcdef', 'def'))
     test:isFalse(strings.endsWith('abcdef', 'cde'))
     test:isFalse(strings.endsWith('abcdef\n', 'def'))
+end)
+
+tap:addTest(
+  'strings.template.compile',
+  function (test)
+    local render
+
+    render = strings.template.compile('abc:%[1]%[2]')
+    test:equal(render {'foo', 'bar'}, 'abc:foobar')
+
+    render = strings.template.compile('abc:%[foo]%[bar]')
+    test:equal(render {foo = 'foo', bar = 'bar'}, 'abc:foobar')
+
+    render = strings.template.compile('abc:%[fn]')
+    test:equal(render {fn=function () return 'foobar' end}, 'abc:foobar')
+end)
+
+tap:addTest(
+  'strings.template.interpolate',
+  function (test)
+    local acc
+
+    local result = strings.template.interpolate(
+      '%[name] is 100%!', {name='World'})
+    test:equal(result, 'World is 100%!')
+
+    local sw = StopWatch.new()
+    sw:reset()
+    acc = {}
+    for i = 1, 50000 do
+      acc[#acc + 1] = string.format('header%s%s', 'foo', 'bar')
+    end
+    fmt.printf('# string.format, time taken: %f', sw:millis())
+
+    sw:reset()
+    acc = {}
+    for i = 1, 50000 do
+      acc[#acc + 1] = 'header'..'foo'..'bar'
+    end
+    fmt.printf('# concat, time taken: %f', sw:millis())
+
+    local render = strings.template.compile('header%[1]%[2]')
+    local data = {'foo', 'bar'}
+    sw:reset()
+    acc = {}
+    for i = 1, 50000 do
+      acc[#acc + 1] = render(data)
+    end
+    fmt.printf('# template, time taken: %f', sw:millis())
 end)
 
 tap:addTest(

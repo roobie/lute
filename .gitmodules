@@ -1,3 +1,6 @@
 [submodule "lj2win32"]
 	path = lj2win32
 	url = https://github.com/Wiladams/lj2win32.git
+[submodule "ljsyscall"]
+	path = ljsyscall
+	url = https://github.com/justincormack/ljsyscall.git

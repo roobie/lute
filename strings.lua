@@ -238,12 +238,88 @@ function strings.compare (a, b)
   end
 end
 
+local function charAt (str, index)
+  return string.sub(str, index, index)
+end
+
 local template = {}
 strings.template = template
---- @example:
---- strings.interpolate('Hello %[name:uppercase], you are 100% awesome!', {name='World'})
-function template.interpolate (template, data)
-  
+
+--- Creates a function based on the supplied template string. This function
+--- accepts a table to be used as the data when rendering the template.
+---
+--- string -> tbl -> string
+function template.compile (tmpl)
+  if type(tmpl) ~= 'string' then
+    error('argument #1 must be a string')
+  end
+
+  local values = {}
+  local len = #tmpl
+
+  --- TODO: nested access
+  --- TODO: inline formatting
+  local function makeTransform (i)
+    local accumulator = ''
+    while i <= len and charAt(tmpl, i) ~= ']' do
+      accumulator = accumulator..charAt(tmpl, i)
+      i = i + 1
+    end
+
+    local num = tonumber(accumulator)
+    if type(num) == 'number' then
+      accumulator = num
+    end
+
+    local transform = function (data)
+      return data[accumulator]
+    end
+
+    return transform, i + 1 -- skip ']'
+  end
+
+  local function makeValue (i)
+    local accumulator = ''
+    while i <= len and string.sub(tmpl, i, i + 1) ~= '%[' do
+      accumulator = accumulator..charAt(tmpl, i)
+      i = i + 1
+    end
+
+    return accumulator, i
+  end
+
+  local i = 1
+  while i <= len do
+    local value
+    if string.sub(tmpl, i, i + 1) == '%[' then
+      value, i = makeTransform(i + 2) -- skip '%['
+    else
+      value, i = makeValue(i)
+    end
+    values[#values + 1] = value
+  end
+
+  return function (data)
+    local accumulator = ''
+    for _, v in ipairs(values) do
+      if type(v) == 'function' then
+        local item = v(data)
+        if type(item) == 'function' then
+          accumulator = accumulator..item()
+        else
+          accumulator = accumulator..tostring(item)
+        end
+      else
+        accumulator = accumulator..v
+      end
+    end
+
+    return accumulator
+  end
+end
+
+function template.interpolate (tmpl, data)
+  return template.compile(tmpl)(data)
 end
 
 return strings

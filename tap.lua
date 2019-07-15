@@ -4,7 +4,9 @@ local inspect = require('inspect')
 local fmt = require('fmt')
 local printf = fmt.printf
 local prototype = require('prototype')
+local StopWatch = require('stopwatch')
 
+local sw = StopWatch.new()
 local totalTestCount = 0
 local totalPassCount = 0
 local totalFailCount = 0
@@ -12,6 +14,7 @@ local totalFailCount = 0
 local Test = prototype({
   enter = function (self, suiteName)
     printf('# %s%s', string.format('%s: ', suiteName) or ' ', self._name)
+    sw:reset()
   end;
 
   exit = function (self)
@@ -20,6 +23,7 @@ local Test = prototype({
         printf('not ok %d - expected %d tests', self._testCount + 1, self._expectedTestCount)
       end
     end
+    printf('# Time elapsed: %f ms', sw:millis())
   end;
 
   comment = function (self, message)

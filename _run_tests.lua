@@ -8,6 +8,7 @@ table.insert(
     local transformations = {
       function (name) return string.gsub(name, '^lute', '') end;
       function (name) return string.gsub(name, '^win32', 'lj2win32.win32') end;
+      function (name) return string.gsub(name, '^syscall', 'ljsyscall.syscall') end;
     }
     local n = moduleName
     for _, t in ipairs(transformations) do
@@ -44,6 +45,7 @@ local tests = {
   require('stack_test');
   require('set_test');
   require('strings_test');
+  require('linalg');
 }
 
 local sw = StopWatch.new()
