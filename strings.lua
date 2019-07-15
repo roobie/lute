@@ -245,6 +245,8 @@ end
 local template = {}
 strings.template = template
 
+local TEMPLATE_BEGIN_TAG = '~['
+local TEMPLATE_END_TAG = '~]'
 --- Creates a function based on the supplied template string. This function
 --- accepts a table to be used as the data when rendering the template.
 ---
@@ -254,33 +256,22 @@ function template.compile (tmpl)
     error('argument #1 must be a string')
   end
 
-  local values = {}
+  local code = '""'
   local len = #tmpl
 
-  --- TODO: nested access
-  --- TODO: inline formatting
   local function makeTransform (i)
     local accumulator = ''
-    while i <= len and charAt(tmpl, i) ~= ']' do
+    while i <= len and string.sub(tmpl, i, i + 1) ~= TEMPLATE_END_TAG do
       accumulator = accumulator..charAt(tmpl, i)
       i = i + 1
     end
 
-    local num = tonumber(accumulator)
-    if type(num) == 'number' then
-      accumulator = num
-    end
-
-    local transform = function (data)
-      return data[accumulator]
-    end
-
-    return transform, i + 1 -- skip ']'
+    return accumulator, i + #TEMPLATE_END_TAG -- skip end tag
   end
 
   local function makeValue (i)
     local accumulator = ''
-    while i <= len and string.sub(tmpl, i, i + 1) ~= '%[' do
+    while i <= len and string.sub(tmpl, i, i + 1) ~= TEMPLATE_BEGIN_TAG do
       accumulator = accumulator..charAt(tmpl, i)
       i = i + 1
     end
@@ -288,33 +279,29 @@ function template.compile (tmpl)
     return accumulator, i
   end
 
+  local function escape (str)
+    return string.gsub(str, '"', '\\"')
+  end
+
   local i = 1
   while i <= len do
     local value
-    if string.sub(tmpl, i, i + 1) == '%[' then
-      value, i = makeTransform(i + 2) -- skip '%['
+    if string.sub(tmpl, i, i + 1) == TEMPLATE_BEGIN_TAG then
+      value, i = makeTransform(i + #TEMPLATE_BEGIN_TAG) -- skip begin tag
+      code = code..'..'..value
     else
       value, i = makeValue(i)
+      code = code..'.."'..escape(value)..'"'
     end
-    values[#values + 1] = value
   end
 
-  return function (data)
-    local accumulator = ''
-    for _, v in ipairs(values) do
-      if type(v) == 'function' then
-        local item = v(data)
-        if type(item) == 'function' then
-          accumulator = accumulator..item()
-        else
-          accumulator = accumulator..tostring(item)
-        end
-      else
-        accumulator = accumulator..v
-      end
-    end
 
-    return accumulator
+  code = 'return '..code
+  -- print(code)
+  local renderer = load(code)
+
+  return function (data)
+    return setfenv(renderer, data)()
   end
 end
 
