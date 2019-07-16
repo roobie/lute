@@ -256,7 +256,7 @@ function template.compile (tmpl)
     error('argument #1 must be a string')
   end
 
-  local code = '""'
+  local code = ''
   local len = #tmpl
 
   local function makeTransform (i)
@@ -296,11 +296,14 @@ function template.compile (tmpl)
   end
 
 
-  code = 'return '..code
-  -- print(code)
+  code = 'return '..string.sub(code, 3)
+  print(code)
   local renderer = load(code)
 
   return function (data)
+    -- local env = {}
+    -- env.__index = _G
+    -- return setfenv(renderer, setmetatable(data, env))()
     return setfenv(renderer, data)()
   end
 end

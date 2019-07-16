@@ -140,23 +140,22 @@ tap:addTest(
     sw:reset()
     acc = {}
     for i = 1, 50000 do
-      acc[#acc + 1] = string.format('header%s%s', 'foo', 'bar')
+      acc[#acc + 1] = string.format('header%d%d', math.random(), math.random())
     end
     fmt.printf('# string.format, time taken: %f', sw:millis())
 
     sw:reset()
     acc = {}
     for i = 1, 50000 do
-      acc[#acc + 1] = 'header'..'foo'..'bar'
+      acc[#acc + 1] = 'header'..math.random()..math.random()
     end
     fmt.printf('# concat, time taken: %f', sw:millis())
 
-    local render = strings.template.compile('header~[foo~]~[bar~]')
-    local data = {foo='foo', bar='bar'}
+    local render = strings.template.compile('header~[foo + bar~]')
     sw:reset()
     acc = {}
     for i = 1, 50000 do
-      acc[#acc + 1] = render(data)
+      acc[#acc + 1] = render {foo=math.random(), bar=math.random(), string=string}
     end
     fmt.printf('# template, time taken: %f', sw:millis())
 end)
