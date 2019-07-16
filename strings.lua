@@ -245,8 +245,8 @@ end
 local template = {}
 strings.template = template
 
-local TEMPLATE_BEGIN_TAG = '~['
-local TEMPLATE_END_TAG = '~]'
+-- TODO consider %[...]
+local TEMPLATE_BEGIN_TAG, TEMPLATE_END_TAG = '#|', '|#'
 --- Creates a function based on the supplied template string. This function
 --- accepts a table to be used as the data when rendering the template.
 ---
@@ -288,7 +288,7 @@ function template.compile (tmpl)
     local value
     if string.sub(tmpl, i, i + 1) == TEMPLATE_BEGIN_TAG then
       value, i = makeTransform(i + #TEMPLATE_BEGIN_TAG) -- skip begin tag
-      code = code..'..'..value
+      code = code..'..('..value..')'
     else
       value, i = makeValue(i)
       code = code..'.."'..escape(value)..'"'
@@ -296,6 +296,7 @@ function template.compile (tmpl)
   end
 
 
+  -- remove the first `..`
   code = 'return '..string.sub(code, 3)
   print(code)
   local renderer = load(code)

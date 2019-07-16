@@ -117,14 +117,14 @@ tap:addTest(
   function (test)
     local render
 
-    render = strings.template.compile('abc:~[a[1]:upper()~]~[a[2]~]')
+    render = strings.template.compile('abc:#|a[1]:upper()|##|a[2]|#')
     test:equal(render {a={'foo', 'bar'}}, 'abc:FOObar')
 
-    render = strings.template.compile('abc:~[foo~]~[bar~]')
-    test:equal(render {foo = 'foo', bar = 'bar'}, 'abc:foobar')
+    -- render = strings.template.compile('abc:#|foo|##|bar|#')
+    -- test:equal(render {foo = 'foo', bar = 'bar'}, 'abc:foobar')
 
-    render = strings.template.compile('abc:~[fn("bar")~]')
-    test:equal(render {fn=function (bar) return 'foo'..bar end}, 'abc:foobar')
+    -- render = strings.template.compile('abc:#|fn("bar")|#')
+    -- test:equal(render {fn=function (bar) return 'foo'..bar end}, 'abc:foobar')
 end)
 
 tap:addTest(
@@ -132,32 +132,32 @@ tap:addTest(
   function (test)
     local acc
 
-    local result = strings.template.interpolate(
-      '~[name~] is []~100%!', {name='World'})
-    test:equal(result, 'World is []~100%!')
+    -- local result = strings.template.interpolate(
+    --   '#|name or "default"|# is|| # []~100%!', {name='World'})
+    -- test:equal(result, 'World is|| # []~100%!')
 
-    local sw = StopWatch.new()
-    sw:reset()
-    acc = {}
-    for i = 1, 50000 do
-      acc[#acc + 1] = string.format('header%d%d', math.random(), math.random())
-    end
-    fmt.printf('# string.format, time taken: %f', sw:millis())
+    -- local sw = StopWatch.new()
+    -- sw:reset()
+    -- acc = {}
+    -- for i = 1, 50000 do
+    --   acc[#acc + 1] = string.format('header%d%d', math.random(), math.random())
+    -- end
+    -- fmt.printf('# string.format, time taken: %f', sw:millis())
 
-    sw:reset()
-    acc = {}
-    for i = 1, 50000 do
-      acc[#acc + 1] = 'header'..math.random()..math.random()
-    end
-    fmt.printf('# concat, time taken: %f', sw:millis())
+    -- sw:reset()
+    -- acc = {}
+    -- for i = 1, 50000 do
+    --   acc[#acc + 1] = 'header'..math.random()..math.random()
+    -- end
+    -- fmt.printf('# concat, time taken: %f', sw:millis())
 
-    local render = strings.template.compile('header~[foo + bar~]')
-    sw:reset()
-    acc = {}
-    for i = 1, 50000 do
-      acc[#acc + 1] = render {foo=math.random(), bar=math.random(), string=string}
-    end
-    fmt.printf('# template, time taken: %f', sw:millis())
+    -- local render = strings.template.compile('header#|foo + bar|#')
+    -- sw:reset()
+    -- acc = {}
+    -- for i = 1, 50000 do
+    --   acc[#acc + 1] = render {foo=math.random(), bar=math.random(), string=string}
+    -- end
+    -- fmt.printf('# template, time taken: %f', sw:millis())
 end)
 
 tap:addTest(
