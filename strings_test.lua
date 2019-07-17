@@ -117,14 +117,14 @@ tap:addTest(
   function (test)
     local render
 
-    render = strings.template.compile('abc:#|a[1]:upper()|##|a[2]|#')
+    render = strings.template.compile('abc:%[a[1]:upper()]%[a[2]]')
     test:equal(render {a={'foo', 'bar'}}, 'abc:FOObar')
 
-    -- render = strings.template.compile('abc:#|foo|##|bar|#')
-    -- test:equal(render {foo = 'foo', bar = 'bar'}, 'abc:foobar')
+    render = strings.template.compile('abc:%[foo]%[bar]')
+    test:equal(render {foo = 'foo', bar = 'bar'}, 'abc:foobar')
 
-    -- render = strings.template.compile('abc:#|fn("bar")|#')
-    -- test:equal(render {fn=function (bar) return 'foo'..bar end}, 'abc:foobar')
+    render = strings.template.compile('abc:%[fn("bar")]')
+    test:equal(render {fn=function (bar) return 'foo'..bar end}, 'abc:foobar')
 end)
 
 tap:addTest(
@@ -132,32 +132,78 @@ tap:addTest(
   function (test)
     local acc
 
-    -- local result = strings.template.interpolate(
-    --   '#|name or "default"|# is|| # []~100%!', {name='World'})
-    -- test:equal(result, 'World is|| # []~100%!')
+    local result = strings.template.interpolate(
+      '%[name or "default"] is|| # []~100%!', {name='World'})
+    test:equal(result, 'World is|| # []~100%!')
 
-    -- local sw = StopWatch.new()
-    -- sw:reset()
-    -- acc = {}
-    -- for i = 1, 50000 do
-    --   acc[#acc + 1] = string.format('header%d%d', math.random(), math.random())
-    -- end
-    -- fmt.printf('# string.format, time taken: %f', sw:millis())
+    local sw = StopWatch.new()
 
-    -- sw:reset()
-    -- acc = {}
-    -- for i = 1, 50000 do
-    --   acc[#acc + 1] = 'header'..math.random()..math.random()
-    -- end
-    -- fmt.printf('# concat, time taken: %f', sw:millis())
+    local function performTest (name, fn)
+      if true then
+        return 0
+      end
+      sw:reset()
+      acc = {}
+      local count = 5000
+      for i = 1, count do
+        acc[#acc + 1] = fn()
+      end
+      local time = sw:millis()
+      fmt.printf('# %s, time taken: %f avg. per run: %f', name, time, time / count)
+    end
 
-    -- local render = strings.template.compile('header#|foo + bar|#')
-    -- sw:reset()
-    -- acc = {}
-    -- for i = 1, 50000 do
-    --   acc[#acc + 1] = render {foo=math.random(), bar=math.random(), string=string}
-    -- end
-    -- fmt.printf('# template, time taken: %f', sw:millis())
+    performTest('string.format', function ()
+                  local args = {}
+                  for i = 1, 10 do
+                    args[i] = math.random()
+                  end
+                  return string.format(
+                    'header%s%s%s%s%s%s%s%s%s%s', unpack(args)) -- slowest so far. On par with .. (concat) and template
+                    -- 'header%d%d%d%d%d%d%d%d%d%d', unpack(args)) -- a lot faster
+                    -- 'header%f%f%f%f%f%f%f%f%f%f', unpack(args)) -- somewhat faster
+    end)
+    performTest('concat', function ()
+                  return 'header'..
+                    math.random()..
+                    math.random()..
+                    math.random()..
+                    math.random()..
+                    math.random()..
+                    math.random()..
+                    math.random()..
+                    math.random()..
+                    math.random()..
+                    math.random()
+    end)
+    performTest('table.concat', function ()
+                  return table.concat {
+                    math.random();
+                    math.random();
+                    math.random();
+                    math.random();
+                    math.random();
+                    math.random();
+                    math.random();
+                    math.random();
+                    math.random();
+                    math.random();
+                  }
+    end)
+    local render = strings.template.compile('header%[d[1]]%[d[2]]%[d[3]]%[d[4]]%[d[5]]%[d[6]]%[d[7]]%[d[8]]%[d[9]]%[d[10]]')
+    performTest('template', function ()
+                  return render {d={
+                                   math.random();
+                                   math.random();
+                                   math.random();
+                                   math.random();
+                                   math.random();
+                                   math.random();
+                                   math.random();
+                                   math.random();
+                                   math.random();
+                                   math.random();
+                                }}
+    end)
 end)
 
 tap:addTest(

@@ -245,24 +245,48 @@ end
 local template = {}
 strings.template = template
 
--- TODO consider %[...]
-local TEMPLATE_BEGIN_TAG, TEMPLATE_END_TAG = '#|', '|#'
+local TEMPLATE_BEGIN_TAG, TEMPLATE_END_TAG = '%[', ']'
+local TEMPLATE_BEGIN_BRACKET, TEMPLATE_END_BRACKET = '[', ']'
+
 --- Creates a function based on the supplied template string. This function
 --- accepts a table to be used as the data when rendering the template.
+--- TODO error handling
 ---
---- string -> tbl -> string
+--- Signature: string -> tbl -> string
+---
+--- Template DSL: Lua code may be included within the square brackets following
+--- a percent sign: %[]. An example of this would be: 'This is static text, but
+--- the following is code: %[akey]'. Calling metamethods are allowed, e.g.:
+--- 'Calling a metamethod: %[stringVal:upper()]'
+---
+--- Compiling a template means that the template string is parsed and
+--- transformed into Lua code consisting of one table, which is returned by a
+--- dynamically created function using `load`. This table is then
+--- `table.concat`ted to finally yield the result.
+---
+--- Full example of usage: 
 function template.compile (tmpl)
   if type(tmpl) ~= 'string' then
     error('argument #1 must be a string')
   end
 
-  local code = ''
+  local code = {}
   local len = #tmpl
 
   local function makeTransform (i)
     local accumulator = ''
-    while i <= len and string.sub(tmpl, i, i + 1) ~= TEMPLATE_END_TAG do
-      accumulator = accumulator..charAt(tmpl, i)
+    local depth = 0
+    while i <= len do
+      local c = charAt(tmpl, i)
+      if c == TEMPLATE_BEGIN_BRACKET then
+        depth = depth + 1
+      elseif c == TEMPLATE_END_BRACKET then
+        if depth == 0 then
+          break
+        end
+        depth = depth - 1
+      end
+      accumulator = accumulator..c
       i = i + 1
     end
 
@@ -288,24 +312,29 @@ function template.compile (tmpl)
     local value
     if string.sub(tmpl, i, i + 1) == TEMPLATE_BEGIN_TAG then
       value, i = makeTransform(i + #TEMPLATE_BEGIN_TAG) -- skip begin tag
-      code = code..'..('..value..')'
+      code[#code + 1] = '('..value..')'
     else
       value, i = makeValue(i)
-      code = code..'.."'..escape(value)..'"'
+      code[#code + 1] = '"'..escape(value)..'"'
     end
   end
 
 
-  -- remove the first `..`
-  code = 'return '..string.sub(code, 3)
+  -- table.insert(code, 1, 'return {')
+  -- code[#code + 1] = '}'
+  code = table.concat(code, ',')
+  code = string.format('return {%s}', code)
   print(code)
   local renderer = load(code)
+  if renderer == nil then
+    error('Invalid template definition')
+  end
 
   return function (data)
     -- local env = {}
     -- env.__index = _G
     -- return setfenv(renderer, setmetatable(data, env))()
-    return setfenv(renderer, data)()
+    return table.concat(setfenv(renderer, data)())
   end
 end
 
