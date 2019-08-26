@@ -44,10 +44,11 @@ local tests = {
   require('queue_test');
   require('stack_test');
   require('set_test');
-  require('strings_test');
   require('flags_test');
   require('linalg');
   require('interop_rg_test');
+  require('rx_test');
+  require('strings_test');
 }
 
 local sw = StopWatch.new()

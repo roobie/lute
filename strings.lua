@@ -264,7 +264,7 @@ local TEMPLATE_BEGIN_BRACKET, TEMPLATE_END_BRACKET = '[', ']'
 --- dynamically created function using `load`. This table is then
 --- `table.concat`ted to finally yield the result.
 ---
---- Full example of usage: 
+--- Full example of usage: TODO
 function template.compile (tmpl)
   if type(tmpl) ~= 'string' then
     error('argument #1 must be a string')
@@ -340,6 +340,39 @@ end
 
 function template.interpolate (tmpl, data)
   return template.compile(tmpl)(data)
+end
+
+do
+  ok, lpeg = pcall(function ()
+      return require('lpeg')
+  end)
+  if ok then
+    function strings.withLpeg (fn)
+      -- local mt0 = {}
+      -- mt0.__index = _G
+      -- local mt1 = setmetatable({}, mt0)
+      -- mt1.__index = {
+      --   --- match pat1 XOR pat2 one or more times
+      --   either = function (pat1, pat2)
+      --     return (pat1 + pat2) ^ 1
+      --   end;
+      --   --- match `pat` 0 or 1 times
+      --   maybe = function (pat)
+      --     return pat ^ -1
+      --   end;
+      -- }
+      -- local mt2 = setmetatable({}, mt1)
+      -- mt2.__index = lpeg
+      -- local env = setmetatable({}, mt2)
+      local mt = {
+        
+      }
+      function mt.__index (self, key)
+        return rawget(...)
+      end
+      return setfenv(fn, env)()
+    end
+  end
 end
 
 return strings

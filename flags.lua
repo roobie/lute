@@ -63,7 +63,7 @@ function Bits.__tostring (self, numbits, bigendian)
 
 	if bigendian then
 		for i = nbits - 1, 0, -1 do
-			if b.isset(value,i) then
+			if b.isset(value, i) then
 				res[#res + 1] = '1'
 			else
 				res[#res + 1] = '0'
@@ -71,7 +71,7 @@ function Bits.__tostring (self, numbits, bigendian)
 		end
 	else
 		for i = 0, nbits - 1 do
-			if b.isset(value,i) then
+			if b.isset(value, i) then
 				res[#res + 1] = '1'
 			else
 				res[#res + 1] = '0'

@@ -31,6 +31,10 @@ function func.bnot (b)
 end
 
 function func.invert (n)
+  return 1 / n
+end
+
+function func.negate (n)
   return -n
 end
 
@@ -118,6 +122,13 @@ function func.cond (tbl)
       end
     end
     return elseBranch
+  end
+end
+
+function func.bind (fn, ...)
+  local args = {...}
+  return function ()
+    return fn(unpack(args))
   end
 end
 

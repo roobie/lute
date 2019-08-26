@@ -207,6 +207,16 @@ tap:addTest(
 end)
 
 tap:addTest(
+  'strings.withLpeg',
+  function (test)
+    strings.withLpeg(function ()
+      test:isTrue(P ~= nil)
+      test:isTrue(type(maybe) == 'function')
+    end)
+    test:isFalse(P ~= nil)
+end)
+
+tap:addTest(
   'strings.XYZ',
   function (test)
 end)

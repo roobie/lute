@@ -19,30 +19,26 @@
 
 ]]
 
+local unpack = rawget(table, 'unpack') or unpack
 local prototype = require('lute.prototype')
 
 local rx = {}
 
-local Stream = prototype {}
-function Stream.new (...)
-  local instance = Stream {
-    values = {...}
-  }
-  local newMt = {}
-  function newMt.__call (self, ...)
+local function createDependentStream (sources, fn)
+end
+
+local function createStream (...)
+  local value = {...}
+
+  local function impl (...)
     if select('#', ...) == 0 then
-      return unpack(self.values)
+      return unpack(value)
     else
-      self.values = {...}
+      value = {...}
     end
   end
 
-  local oldMt = getmetatable(instance)
-  return setmetatable(instance, setmetatable(newMt, oldMt))
+  return impl
 end
-
-local unpack = rawget(table, 'unpack') or unpack
-
-rx.stream = Stream.new
 
 return rx
