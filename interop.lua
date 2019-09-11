@@ -1,6 +1,6 @@
 
-local prototype = require('lute.prototype')
-local func = require('lute.func')
+local prototype = require('prototype')
+local func = require('func')
 
 local ffi = require('ffi')
 local delimiter = '/'

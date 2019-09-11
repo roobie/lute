@@ -1,9 +1,9 @@
-local prototype = require('lute.prototype')
+local prototype = require('prototype')
 
 -- for sortInPlace
-local quickSort = require('lute.quick_sort_generic')
+local quickSort = require('quick_sort_generic')
 -- for sort
-local quickSortTable = require('lute.quick_sort')
+local quickSortTable = require('quick_sort')
 
 --[[
 

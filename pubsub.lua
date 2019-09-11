@@ -1,5 +1,5 @@
-local List = require('lute.doubly_linked_list')
-local prototype = require('lute.prototype')
+local List = require('doubly_linked_list')
+local prototype = require('prototype')
 
 local Pubsub = prototype {}
 

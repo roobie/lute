@@ -42,7 +42,7 @@ function func.double (n)
   return n * 2
 end
 
-function func.half (n)
+function func.halve (n)
   return n / 2
 end
 

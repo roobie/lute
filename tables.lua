@@ -1,5 +1,5 @@
-local prototype = require('lute.prototype')
-local strings = require('lute.strings')
+local prototype = require('prototype')
+local strings = require('strings')
 
 local tables = prototype {}
 

@@ -191,29 +191,37 @@ tap:addTest(
     end)
     local render = strings.template.compile('header%[d[1]]%[d[2]]%[d[3]]%[d[4]]%[d[5]]%[d[6]]%[d[7]]%[d[8]]%[d[9]]%[d[10]]')
     performTest('template', function ()
-                  return render {d={
-                                   math.random();
-                                   math.random();
-                                   math.random();
-                                   math.random();
-                                   math.random();
-                                   math.random();
-                                   math.random();
-                                   math.random();
-                                   math.random();
-                                   math.random();
-                                }}
+                  return render {
+                    d = {
+                      math.random();
+                      math.random();
+                      math.random();
+                      math.random();
+                      math.random();
+                      math.random();
+                      math.random();
+                      math.random();
+                      math.random();
+                      math.random();
+                    }
+                  }
     end)
 end)
 
 tap:addTest(
   'strings.withLpeg',
   function (test)
-    strings.withLpeg(function ()
+    local result = strings.withLpeg(function ()
       test:isTrue(P ~= nil)
-      test:isTrue(type(maybe) == 'function')
+
+      local maybe_a = maybe(P'a')
+      local either_ab = either(P'a', P'b')
+      test:equal(maybe_a:match('ab'), 2)
+      test:equal(either_ab:match('aaa'), 4)
+      return 1
     end)
     test:isFalse(P ~= nil)
+    test:equal(result, 1)
 end)
 
 tap:addTest(

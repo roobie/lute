@@ -1,4 +1,4 @@
-local F = require('lute.func')
+local F = require('func')
 
 local strings = {}
 
@@ -347,29 +347,39 @@ do
       return require('lpeg')
   end)
   if ok then
+    --- This function sets an fenv on the supplied function so that LPeg and a
+    --- couple of helper functions are available unqualified.
+    ---
+    --- @example:
+    --- local result = withLpeg(function ()
+    ---   return (P'123'):match('x123x')
+    --- end)
     function strings.withLpeg (fn)
-      -- local mt0 = {}
-      -- mt0.__index = _G
-      -- local mt1 = setmetatable({}, mt0)
-      -- mt1.__index = {
-      --   --- match pat1 XOR pat2 one or more times
-      --   either = function (pat1, pat2)
-      --     return (pat1 + pat2) ^ 1
-      --   end;
-      --   --- match `pat` 0 or 1 times
-      --   maybe = function (pat)
-      --     return pat ^ -1
-      --   end;
-      -- }
-      -- local mt2 = setmetatable({}, mt1)
-      -- mt2.__index = lpeg
-      -- local env = setmetatable({}, mt2)
-      local mt = {
-        
+      local envObj = {
+        --- match pat1 XOR pat2 one or more times
+        either = function (pat1, pat2)
+          return (pat1 + pat2) ^ 1
+        end;
+        --- match `pat` 0 or 1 times
+        maybe = function (pat)
+          return pat ^ -1
+        end;
       }
-      function mt.__index (self, key)
-        return rawget(...)
+      local mt = {}
+      mt.__index = function (self, key)
+        if lpeg[key] then
+          return lpeg[key]
+        elseif envObj[key] then
+          return envObj[key]
+        elseif _G[key] then
+          return _G[key]
+        end
+
+        return nil
       end
+
+      local env = setmetatable(envObj, mt)
+
       return setfenv(fn, env)()
     end
   end

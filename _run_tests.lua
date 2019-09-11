@@ -23,6 +23,8 @@ local Tap = require('tap')
 local printf = require('fmt').printf
 local StopWatch = require('stopwatch')
 
+local args = ...
+
 Tap.printHeader()
 
 local tests = {

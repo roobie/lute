@@ -1,8 +1,8 @@
 
 local inspect = require('inspect')
-local fmt = require('lute.fmt')
+local fmt = require('fmt')
 local tap = require('tap').new {name = 'rx.lua'}
-local rx = require('lute.kitchen_sink.rx')
+local rx = require('kitchen_sink.rx')
 
 tap:addTest(
   'rx',
