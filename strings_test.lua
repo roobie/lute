@@ -211,17 +211,19 @@ end)
 tap:addTest(
   'strings.withLpeg',
   function (test)
-    local result = strings.withLpeg(function ()
-      test:isTrue(P ~= nil)
+    if pcall(require, 'lpeg') then
+      local result = strings.withLpeg(function ()
+          test:isTrue(P ~= nil)
 
-      local maybe_a = maybe(P'a')
-      local either_ab = either(P'a', P'b')
-      test:equal(maybe_a:match('ab'), 2)
-      test:equal(either_ab:match('aaa'), 4)
-      return 1
-    end)
-    test:isFalse(P ~= nil)
-    test:equal(result, 1)
+          local maybe_a = maybe(P'a')
+          local either_ab = either(P'a', P'b')
+          test:equal(maybe_a:match('ab'), 2)
+          test:equal(either_ab:match('aaa'), 4)
+          return 1
+      end)
+      test:isFalse(P ~= nil)
+      test:equal(result, 1)
+    end
 end)
 
 tap:addTest(
