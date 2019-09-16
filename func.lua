@@ -139,4 +139,8 @@ function func.bind (fn, ...)
   end
 end
 
+function func.transform (object, transformation)
+  return transformation(object)
+end
+
 return func

@@ -304,7 +304,8 @@ function template.compile (tmpl)
   end
 
   local function escape (str)
-    return string.gsub(str, '"', '\\"')
+    local gsub = string.gsub
+    return gsub(gsub(str, '"', '\\"'), '\n', '\\n')
   end
 
   local i = 1

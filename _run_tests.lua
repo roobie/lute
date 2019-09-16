@@ -32,7 +32,6 @@ local tests = {
   require('linked_list_test');
   require('doubly_linked_list_test');
   require('min_heap_test');
-  require('func_test');
   require('collections_test');
   require('tables_test');
   require('curried_test');
@@ -51,6 +50,7 @@ local tests = {
   require('interop_rg_test');
   require('rx_test');
   require('strings_test');
+  require('func_test');
 }
 
 local sw = StopWatch.new()
