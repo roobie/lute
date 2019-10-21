@@ -4,8 +4,8 @@
   "description": "Lua reusable stuff",
   "main": "index.js",
   "scripts": {
-    "test": "lua _run_tests.lua",
-    "test:pretty": "lua _run_tests.lua | tap-spec",
+    "test": "luajit _run_tests.lua",
+    "test:pretty": "luajit _run_tests.lua | tap-spec",
     "test:pretty:watch": "nodemon -x \"npm run test:pretty\" -e lua",
     "test:watch": "nodemon _run_tests.lua"
   },

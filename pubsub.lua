@@ -20,7 +20,7 @@ function Pubsub.unsubscribe (self, listener)
 end
 
 function Pubsub.publish (self, ...)
-  for _, listener in ipairs(self.listeners) do
+  for _, listener in self.listeners:iter() do
     listener(...)
   end
 end

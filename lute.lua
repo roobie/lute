@@ -1754,8 +1754,15 @@ end
 
 function func.bind (fn, ...)
   local args = {...}
-  return function ()
-    return fn(unpack(args))
+  return function (...)
+    local args2 = {}
+    for _, v in ipairs(args) do
+      args2[#args2 + 1] = v
+    end
+    for i=1,select('#', ...) do
+      args2[#args2 + 1] = select(i, ...)
+    end
+    return fn(unpack(args2))
   end
 end
 
@@ -4414,7 +4421,7 @@ function Pubsub.unsubscribe (self, listener)
 end
 
 function Pubsub.publish (self, ...)
-  for _, listener in ipairs(self.listeners) do
+  for _, listener in self.listeners:iter() do
     listener(...)
   end
 end

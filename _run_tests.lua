@@ -42,7 +42,6 @@ local tests = {
   require('table_list_test');
   require('quad_tree_test');
   require('avl_tree_test');
-  require('pubsub_test');
   require('queue_test');
   require('stack_test');
   require('set_test');
@@ -51,6 +50,7 @@ local tests = {
   require('interop_rg_test');
   require('rx_test');
   require('strings_test');
+  require('pubsub_test');
 }
 
 local sw = StopWatch.new()
