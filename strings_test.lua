@@ -2,6 +2,9 @@ local strings = require('strings')
 local Tap = require('tap')
 local inspect = require('inspect')
 local fmt = require('fmt')
+local tables = require('tables')
+local F = require('func')
+local curried = require('curried')
 
 local StopWatch = require('stopwatch')
 
@@ -110,6 +113,31 @@ tap:addTest(
     test:isTrue(strings.endsWith('abcdef', 'def'))
     test:isFalse(strings.endsWith('abcdef', 'cde'))
     test:isFalse(strings.endsWith('abcdef\n', 'def'))
+end)
+
+tap:addTest(
+  'strings.template (HTML example)',
+  function (test)
+    local render = strings.template.compile([[
+<div>
+  <h1>%[title]</h1>
+  %[paragraphs]
+</div>
+]])
+    local renderParagraph = strings.template.compile('<p>%[content]</p>')
+    local renderParagraphs = F.pipe {
+      curried.map(function (content) return renderParagraph {content = content} end),
+      function (tbl) return table.concat(tbl, '\n') end
+    }
+
+    local output = render {
+      title = 'Lute',
+      paragraphs = renderParagraphs {
+        'This is a paragraph',
+        'This is another paragraph'
+      }
+    }
+    print(output)
 end)
 
 tap:addTest(

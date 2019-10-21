@@ -70,4 +70,20 @@ tap:addTest(
     test:equal(table.concat(F.collect2(iter), ':'), '2:3:4')
 end)
 
+tap:addTest(
+  'func.bind',
+  function (test)
+    local function add (...)
+      local a = 0
+      for i=1,select('#', ...) do
+        a = a + select(i, ...)
+      end
+
+      return a
+    end
+
+    local f = F.bind(add, 1, 1)
+    test:equal(f(2, 3), 7)
+end)
+
 return tap

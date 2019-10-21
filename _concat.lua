@@ -76,3 +76,10 @@ print(output)
 local distfile = io.open('lute.lua', 'w+')
 distfile:write(output)
 distfile:close()
+
+local ok, lute = pcall(require, 'lute')
+if not ok then
+  error(string.format('lute not functioning, %s', lute))
+else
+  print(lute)
+end
