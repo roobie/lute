@@ -106,7 +106,8 @@ tap:addTest(
   'tables.get',
   function (test)
     local data = {
-      atable = { 123, 234, 345 }
+      atable = { 123, 234, 345 };
+      ktable = {test1 = 123, test2 = 234};
     }
     local v = tables.get(data, 'atable.1', 'NOTFOUND')
     test:equal(v, 123)
@@ -116,6 +117,9 @@ tap:addTest(
     test:equal(v, 345)
     local v = tables.get(data, 'atable.4', 'NOTFOUND')
     test:equal(v, 'NOTFOUND')
+
+    local v = tables.get(data, 'ktable.test1', 'NOTFOUND')
+    test:equal(v, 123)
 end)
 
 return tap
