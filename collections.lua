@@ -50,7 +50,8 @@
 local interfaces = {}
 
 
-local List = interfaces.List = {}
+interfaces.List = {}
+local List = interfaces.List
 
 --- Static method
 --- Creates a new instance of `List`.
