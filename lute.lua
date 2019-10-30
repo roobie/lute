@@ -1766,6 +1766,10 @@ function func.bind (fn, ...)
   end
 end
 
+function func.transform (object, transformation)
+  return transformation(object)
+end
+
 return func
 
 end)()
@@ -2290,7 +2294,8 @@ function template.compile (tmpl)
   end
 
   local function escape (str)
-    return string.gsub(str, '"', '\\"')
+    local gsub = string.gsub
+    return gsub(gsub(str, '"', '\\"'), '\n', '\\n')
   end
 
   local i = 1

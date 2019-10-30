@@ -1,2 +1,1 @@
-
-d:\apps\luajit\luajit.exe %*
+c:\apps\luajit\luajit.exe %*

@@ -97,7 +97,7 @@ end
 -- only Linux as of now. See https://github.com/luapower/time
 local function posiximpl ()
 
-	ffi.cdef[[
+  ffi.cdef[[
     typedef struct {
       long s;
       long ns;
@@ -106,23 +106,23 @@ local function posiximpl ()
     int time_nanosleep(time_timespec*, time_timespec *) asm("nanosleep");
   ]]
 
-	local EINTR = 4
+  local EINTR = 4
 
-	local t = ffi.new('time_timespec')
+  local t = ffi.new('time_timespec')
 
-	local function sleep (s)
-		local int, frac = math.modf(s)
-		t.s = int
-		t.ns = frac * 1e9
-		local ret = C.time_nanosleep(t, t)
-		while ret == -1 and ffi.errno() == EINTR do --interrupted
-			ret = C.time_nanosleep(t, t)
-		end
-		assert(ret == 0)
-	end
+  local function sleep (s)
+    local int, frac = math.modf(s)
+    t.s = int
+    t.ns = frac * 1e9
+    local ret = C.time_nanosleep(t, t)
+    while ret == -1 and ffi.errno() == EINTR do --interrupted
+      ret = C.time_nanosleep(t, t)
+    end
+    assert(ret == 0)
+  end
 
   ffi.cdef [[
-		int time_clock_gettime(int clock_id, time_timespec *tp) asm("clock_gettime");
+    int time_clock_gettime(int clock_id, time_timespec *tp) asm("clock_gettime");
   ]]
 
   local CLOCK_REALTIME = 0
