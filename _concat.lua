@@ -49,15 +49,16 @@ for line in io.lines('init.lua') do
   end
 end
 
-local output = [[
----! Built from commit hash: ]]..hash..[[
+local output = strings.template.interpolate([[
+---! Built from commit hash: %[hash]
 
 local export = {
 --- The license defined here might be overridden in each underlying module.
 --- Please refer to each module to see whether that is the case.
-]]..initContents..[[
+%[initContents]
 }
 
+--- internal require, to accomodate interdependencies even when concat'd
 local function require (name)
   if export[name] then
     return export[name]
@@ -66,19 +67,29 @@ local function require (name)
   end
 end
 
+]], {
+  hash = hash;
+  initContents = initContents;
+})
+
+local moduleTemplate = strings.template.compile [[
+
+--- BEGIN %[module].lua
+export.%[module] = (function ()
+%[sourceCode]
+end)()
+--- END %[module].lua
+
 ]]
+
 for _, modname in ipairs(modules) do
   local f = io.open(modname..'.lua')
   local code = f:read('*a')
   f:close()
-  code = string.format([[
-
---- BEGIN %s.lua
-export.%s = (function ()
-%s
-end)()
---- END %s.lua
-]], modname, modname, code, modname)
+  code = moduleTemplate {
+    module = modname;
+    sourceCode = code;
+  }
   output = output..code
 end
 output = output..
@@ -91,6 +102,7 @@ local distfile = io.open('lute.lua', 'w+')
 distfile:write(output)
 distfile:close()
 
+-- check that the concat'd file is `load`/`require`able
 local ok, lute = pcall(require, 'lute')
 if not ok then
   error(string.format('lute not functioning, %s', lute))

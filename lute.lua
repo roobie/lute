@@ -1,4 +1,5 @@
----! Built from commit hash: 421f265597897cd19678626f26b842cae67c9b63
+---! Built from commit hash: c1663e36d77e7e2b3c66067306fceb9a67a9e7d0
+
 local export = {
 --- The license defined here might be overridden in each underlying module.
 --- Please refer to each module to see whether that is the case.
@@ -209,8 +210,10 @@ local export = {
    See the License for the specific language governing permissions and
    limitations under the License.
   ]]
+
 }
 
+--- internal require, to accomodate interdependencies even when concat'd
 local function require (name)
   if export[name] then
     return export[name]
@@ -558,6 +561,7 @@ return inspect
 
 end)()
 --- END inspect.lua
+
 
 --- BEGIN fun.lua
 export.fun = (function ()
@@ -1623,6 +1627,7 @@ return exports
 end)()
 --- END fun.lua
 
+
 --- BEGIN func.lua
 export.func = (function ()
 --[[
@@ -1775,6 +1780,7 @@ return func
 end)()
 --- END func.lua
 
+
 --- BEGIN prototype.lua
 export.prototype = (function ()
 --[[
@@ -1856,6 +1862,7 @@ return prototype
 end)()
 --- END prototype.lua
 
+
 --- BEGIN fmt.lua
 export.fmt = (function ()
 local fmt = {}
@@ -1876,6 +1883,7 @@ return fmt
 
 end)()
 --- END fmt.lua
+
 
 --- BEGIN flags.lua
 export.flags = (function ()
@@ -1985,6 +1993,7 @@ return Flags
 
 end)()
 --- END flags.lua
+
 
 --- BEGIN strings.lua
 export.strings = (function ()
@@ -2385,6 +2394,7 @@ return strings
 end)()
 --- END strings.lua
 
+
 --- BEGIN tables.lua
 export.tables = (function ()
 local prototype = require('prototype')
@@ -2537,6 +2547,7 @@ return tables
 end)()
 --- END tables.lua
 
+
 --- BEGIN quick_sort.lua
 export.quick_sort = (function ()
 local function swap (tbl, i1, i2)
@@ -2578,6 +2589,7 @@ return quickSort
 
 end)()
 --- END quick_sort.lua
+
 
 --- BEGIN quick_sort_generic.lua
 export.quick_sort_generic = (function ()
@@ -2633,6 +2645,7 @@ return quickSort
 
 end)()
 --- END quick_sort_generic.lua
+
 
 --- BEGIN table_list.lua
 export.table_list = (function ()
@@ -2854,6 +2867,7 @@ return List
 
 end)()
 --- END table_list.lua
+
 
 --- BEGIN avl_tree.lua
 export.avl_tree = (function ()
@@ -3121,6 +3135,7 @@ return Tree
 end)()
 --- END avl_tree.lua
 
+
 --- BEGIN linked_list.lua
 export.linked_list = (function ()
 local prototype = require('prototype')
@@ -3256,6 +3271,7 @@ return List
 
 end)()
 --- END linked_list.lua
+
 
 --- BEGIN doubly_linked_list.lua
 export.doubly_linked_list = (function ()
@@ -3735,6 +3751,7 @@ return List
 end)()
 --- END doubly_linked_list.lua
 
+
 --- BEGIN max_heap.lua
 export.max_heap = (function ()
 --[[
@@ -3853,6 +3870,7 @@ return MaxHeap
 
 end)()
 --- END max_heap.lua
+
 
 --- BEGIN min_heap.lua
 export.min_heap = (function ()
@@ -3975,6 +3993,7 @@ return MinHeap
 
 end)()
 --- END min_heap.lua
+
 
 --- BEGIN quad_tree.lua
 export.quad_tree = (function ()
@@ -4180,6 +4199,7 @@ return QTree
 end)()
 --- END quad_tree.lua
 
+
 --- BEGIN queue.lua
 export.queue = (function ()
 --[[
@@ -4225,6 +4245,7 @@ return Queue
 
 end)()
 --- END queue.lua
+
 
 --- BEGIN set.lua
 export.set = (function ()
@@ -4334,6 +4355,7 @@ return Set
 end)()
 --- END set.lua
 
+
 --- BEGIN stack.lua
 export.stack = (function ()
 --[[
@@ -4380,6 +4402,7 @@ return Stack
 end)()
 --- END stack.lua
 
+
 --- BEGIN curried.lua
 export.curried = (function ()
 local tables = require('tables')
@@ -4413,6 +4436,7 @@ return curried
 
 end)()
 --- END curried.lua
+
 
 --- BEGIN pubsub.lua
 export.pubsub = (function ()
@@ -4451,6 +4475,7 @@ return Pubsub
 
 end)()
 --- END pubsub.lua
+
 
 --- BEGIN utf8.lua
 export.utf8 = (function ()
@@ -5502,6 +5527,7 @@ return {
 
 end)()
 --- END utf8.lua
+
 
 
 --[[
