@@ -231,6 +231,10 @@ function strings.endsWith (str, substr)
   return (string.find(str, string.format('%s$', substr)) ~= nil)
 end
 
+function strings.includes (str, substr)
+  return (string.find(str, substr) ~= nil)
+end
+
 function strings.compare (a, b)
   if     a < b then return -1
   elseif a > b then return  1

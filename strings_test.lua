@@ -116,6 +116,14 @@ tap:addTest(
 end)
 
 tap:addTest(
+  'strings.includes',
+  function (test)
+    test:isTrue(strings.includes('abcdef', 'bcd'))
+    test:isFalse(strings.includes('abcdef', 'aa'))
+    test:isTrue(strings.includes('\nabcdef', 'abcd'))
+end)
+
+tap:addTest(
   'strings.template (HTML example)',
   function (test)
     local render = strings.template.compile [[

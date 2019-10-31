@@ -1,4 +1,4 @@
-
+---! Built from commit hash: 421f265597897cd19678626f26b842cae67c9b63
 local export = {
 --- The license defined here might be overridden in each underlying module.
 --- Please refer to each module to see whether that is the case.
@@ -1858,21 +1858,21 @@ end)()
 
 --- BEGIN fmt.lua
 export.fmt = (function ()
-local _module = {}
+local fmt = {}
 
-function _module.printf (fmt, ...)
+function fmt.printf (fmt, ...)
   print(string.format(fmt, ...))
 end
 
-function _module.writef (fmt, ...)
+function fmt.writef (fmt, ...)
   io.write(string.format(fmt, ...))
 end
 
-function _module.fprintf (fd, fmt, ...)
+function fmt.fprintf (fd, fmt, ...)
   fd:write(string.format(fmt, ...))
 end
 
-return _module
+return fmt
 
 end)()
 --- END fmt.lua
@@ -1893,15 +1893,15 @@ local b = setmetatable({}, {
 })
 function b.mask (lowbit, highbit)
   assert(lowbit <= highbit, 'lowbit must be <= highbit')
-	-- create a mask which matches the desired range of bits
-	local bitcount = highbit - lowbit + 1
+  -- create a mask which matches the desired range of bits
+  local bitcount = highbit - lowbit + 1
 
-	local mask = 0xffffffff
-	mask = lshift(mask, bitcount)
-	mask = NOT(mask)
-	mask = lshift(mask, lowbit)
+  local mask = 0xffffffff
+  mask = lshift(mask, bitcount)
+  mask = NOT(mask)
+  mask = lshift(mask, lowbit)
 
-	return mask
+  return mask
 end
 
 function b.slice (bits, lowbit, highbit)
@@ -1909,10 +1909,10 @@ function b.slice (bits, lowbit, highbit)
     highbit = lowbit
     lowbit = 0
   end
-	lowbit = lowbit or 0
-	highbit = highbit or 0
+  lowbit = lowbit or 0
+  highbit = highbit or 0
 
-	return rshift(AND(bits, b.mask(lowbit, highbit)), lowbit)
+  return rshift(AND(bits, b.mask(lowbit, highbit)), lowbit)
 end
 
 function b.isset (bits, bitOrd)
@@ -1939,28 +1939,28 @@ end
 -- TODO consider prealloc an array with '0' and change only if needed
 function Bits.__tostring (self, numbits, bigendian)
   local value = self.ival
-	nbits = nbits or 32
-	local res = {}
+  nbits = nbits or 32
+  local res = {}
 
-	if bigendian then
-		for i = nbits - 1, 0, -1 do
-			if b.isset(value, i) then
-				res[#res + 1] = '1'
-			else
-				res[#res + 1] = '0'
-			end
-		end
-	else
-		for i = 0, nbits - 1 do
-			if b.isset(value, i) then
-				res[#res + 1] = '1'
-			else
-				res[#res + 1] = '0'
-			end
-		end
-	end
+  if bigendian then
+    for i = nbits - 1, 0, -1 do
+      if b.isset(value, i) then
+        res[#res + 1] = '1'
+      else
+        res[#res + 1] = '0'
+      end
+    end
+  else
+    for i = 0, nbits - 1 do
+      if b.isset(value, i) then
+        res[#res + 1] = '1'
+      else
+        res[#res + 1] = '0'
+      end
+    end
+  end
 
-	return table.concat(res)
+  return table.concat(res)
 end
 
 local Flags = prototype {}
@@ -2219,6 +2219,10 @@ end
 
 function strings.endsWith (str, substr)
   return (string.find(str, string.format('%s$', substr)) ~= nil)
+end
+
+function strings.includes (str, substr)
+  return (string.find(str, substr) ~= nil)
 end
 
 function strings.compare (a, b)
@@ -2518,6 +2522,14 @@ function tables.swap (tbl, i1, i2)
   tbl[i1] = tbl[i2]
   tbl[i2] = temp
   -- return tbl[i1], tbl[i2], tbl
+end
+
+function tables.collect (iterable)
+  local result = {}
+  for v in iterable do
+    result[#result + 1] = v
+  end
+  return result
 end
 
 return tables

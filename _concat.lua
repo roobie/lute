@@ -1,4 +1,16 @@
 
+local hash = ''
+local strings = require('strings')
+local tables = require('tables')
+local interop = require('interop')
+local git = interop.Program.new('git')
+local commit = git:run({'log -1'}, function (gitLog)
+  local lines = tables.collect(gitLog:lines())
+  local commitLine = lines[1]
+  hash = strings.split(commitLine, ' ')[2]
+  print('Commit hash:', hash)
+end)
+
 local modules = {
   'inspect';
   'fun';
@@ -27,6 +39,7 @@ local modules = {
   'utf8';
 }
 
+
 local initContents = ''
 for line in io.lines('init.lua') do
   if line:find('return') == 1 then
@@ -37,6 +50,7 @@ for line in io.lines('init.lua') do
 end
 
 local output = [[
+---! Built from commit hash: ]]..hash..[[
 
 local export = {
 --- The license defined here might be overridden in each underlying module.

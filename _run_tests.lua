@@ -46,11 +46,11 @@ local tests = {
   require('linalg');
   require('interop_rg_test');
   require('rx_test');
-  require('strings_test');
   require('pubsub_test');
   require('func_test');
   require('randy_test');
   require('avl_tree_test');
+  require('strings_test');
 }
 
 local sw = StopWatch.new()

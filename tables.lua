@@ -135,4 +135,12 @@ function tables.swap (tbl, i1, i2)
   -- return tbl[i1], tbl[i2], tbl
 end
 
+function tables.collect (iterable)
+  local result = {}
+  for v in iterable do
+    result[#result + 1] = v
+  end
+  return result
+end
+
 return tables

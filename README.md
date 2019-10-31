@@ -1,23 +1,21 @@
 # lute
 
-> A Lua library that tries to fill the gaps.
+> A general Lua library.
 
-Some items here are from other repos - will make them submodules or something in
-the future.
+Some units here are verbatim copies from other repos - will make them submodules or something in
+the future (they might be licensed differently from this repo. See the files themselves for details).
 
 # General usage and information
 
-This library is intended to be used as a git submodule, so when using it in your projects you would go to your source folder and invoke git somewhat like this:
-
-`git submodule add https://github.com/roobie/lute lute`
-
-and then
-
-`git submodule --init --recursive`
+This library is intended to be used as drop in Lua module, so when using it in your projects you would copy the `lute.lua` file into your project and then use it as such:
 
 which will then allow you to
 
-`local MOD = require('lute.MOD')`
+`local lute = require('lute')`
+
+and then
+
+`local MOD = lute.MOD -- where MOD is one of the separate modules in this project`
 
 In general, the modules follow the basic structure that they:
 
@@ -70,7 +68,8 @@ local b = mod.b
 * source code should be formatted and easier to read than to write.
 
 
-
 # Reference
+
+> TBD
 
 ## The `prototype` module
