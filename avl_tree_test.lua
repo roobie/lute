@@ -23,12 +23,17 @@ tap:addTest(
   'insert',
   function (test)
     local t = Tree.new()
-    for i = 1, 40 do
-      t:insert(r:integer(10, 99))
-    end
-
-    -- dump(t._root)
-    test:isTrue(#t:enumerate() > 30)
+    t:insert(14)
+    t:insert(4)
+    t:insert(44)
+    t:insert(33)
+    t:insert(55)
+    t:insert(5)
+    t:insert(15)
+    t:insert(12)
+    t:insert(18)
+    t:insert(1)
+    test:isTrue(#t:enumerate() == 10)
 end)
 
 tap:addTest(
@@ -54,20 +59,25 @@ tap:addTest(
 
     local function tstr (t)
       local s = ''
-      for k,v in pairs(t) do
+      for k, v in pairs(t) do
         s = s..tostring(k)..':'..tostring(v)
       end
       return s
     end
-    t:insert(Kvp.new('a', List.new()))
     t:insert(Kvp.new('b', List.new()))
-    t:insert(Kvp.new('c', List.new()))
     t:insert(Kvp.new('d', List.new()))
+    t:insert(Kvp.new('g', List.new()))
+    t:insert(Kvp.new('a', List.new()))
     t:insert(Kvp.new('e', List.new()))
     t:insert(Kvp.new('f', List.new()))
-    t:insert(Kvp.new('g', List.new()))
+    t:insert(Kvp.new('c', List.new()))
 
     -- dump(t._root)
+    local correctOrder = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
+    for i, v in t:iter() do
+      -- print(i, v)
+      test:equal(v.key, correctOrder[i], string.format('It should be ordered: %s', v))
+    end
 end)
 
 tap:addTest(

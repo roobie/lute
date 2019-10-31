@@ -1,6 +1,6 @@
 
 local inspect = require('inspect')
-local fmt = require('lute.fmt')
+local fmt = require('fmt')
 local tap = require('tap').new {name = 'interop_rg.lua'}
 local interop = require('interop')
 local Program = interop.Program
@@ -12,7 +12,7 @@ tap:addTest(
     local searchvalue = 'rx'
     rg:run({searchvalue, './'}, function (file)
         for line in file:lines() do
-          -- print(line)
+          print(line)
         end
     end)
 end)

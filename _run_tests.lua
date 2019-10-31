@@ -37,10 +37,8 @@ local tests = {
   require('curried_test');
   require('max_heap_test');
   require('prototype_test');
-  require('randy_test');
   require('table_list_test');
   require('quad_tree_test');
-  require('avl_tree_test');
   require('queue_test');
   require('stack_test');
   require('set_test');
@@ -51,6 +49,8 @@ local tests = {
   require('strings_test');
   require('pubsub_test');
   require('func_test');
+  require('randy_test');
+  require('avl_tree_test');
 }
 
 local sw = StopWatch.new()

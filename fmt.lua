@@ -1,15 +1,15 @@
-local _module = {}
+local fmt = {}
 
-function _module.printf (fmt, ...)
+function fmt.printf (fmt, ...)
   print(string.format(fmt, ...))
 end
 
-function _module.writef (fmt, ...)
+function fmt.writef (fmt, ...)
   io.write(string.format(fmt, ...))
 end
 
-function _module.fprintf (fd, fmt, ...)
+function fmt.fprintf (fd, fmt, ...)
   fd:write(string.format(fmt, ...))
 end
 
-return _module
+return fmt

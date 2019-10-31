@@ -118,12 +118,12 @@ end)
 tap:addTest(
   'strings.template (HTML example)',
   function (test)
-    local render = strings.template.compile([[
-<div>
-  <h1>%[title]</h1>
-  %[paragraphs]
-</div>
-]])
+    local render = strings.template.compile [[
+    <div>
+      <h1>%[title]</h1>
+      %[paragraphs]
+    </div>
+    ]]
     local renderParagraph = strings.template.compile('<p>%[content]</p>')
     local renderParagraphs = F.pipe {
       curried.map(function (content) return renderParagraph {content = content} end),

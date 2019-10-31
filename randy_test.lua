@@ -36,4 +36,12 @@ tap:addTest(
     test:isTrue(math.abs(sum - 150) < 2, tostring(sum))
 end)
 
+tap:addTest(
+  'sample',
+  function (test)
+    local r = Randy.new()
+    local v1 = r:sample({1,2}, 2)
+    test:equal(#v1, 2, 'should sample all')
+  end)
+
 return tap

@@ -12,15 +12,15 @@ local b = setmetatable({}, {
 })
 function b.mask (lowbit, highbit)
   assert(lowbit <= highbit, 'lowbit must be <= highbit')
-	-- create a mask which matches the desired range of bits
-	local bitcount = highbit - lowbit + 1
+  -- create a mask which matches the desired range of bits
+  local bitcount = highbit - lowbit + 1
 
-	local mask = 0xffffffff
-	mask = lshift(mask, bitcount)
-	mask = NOT(mask)
-	mask = lshift(mask, lowbit)
+  local mask = 0xffffffff
+  mask = lshift(mask, bitcount)
+  mask = NOT(mask)
+  mask = lshift(mask, lowbit)
 
-	return mask
+  return mask
 end
 
 function b.slice (bits, lowbit, highbit)
@@ -28,10 +28,10 @@ function b.slice (bits, lowbit, highbit)
     highbit = lowbit
     lowbit = 0
   end
-	lowbit = lowbit or 0
-	highbit = highbit or 0
+  lowbit = lowbit or 0
+  highbit = highbit or 0
 
-	return rshift(AND(bits, b.mask(lowbit, highbit)), lowbit)
+  return rshift(AND(bits, b.mask(lowbit, highbit)), lowbit)
 end
 
 function b.isset (bits, bitOrd)
@@ -58,28 +58,28 @@ end
 -- TODO consider prealloc an array with '0' and change only if needed
 function Bits.__tostring (self, numbits, bigendian)
   local value = self.ival
-	nbits = nbits or 32
-	local res = {}
+  nbits = nbits or 32
+  local res = {}
 
-	if bigendian then
-		for i = nbits - 1, 0, -1 do
-			if b.isset(value, i) then
-				res[#res + 1] = '1'
-			else
-				res[#res + 1] = '0'
-			end
-		end
-	else
-		for i = 0, nbits - 1 do
-			if b.isset(value, i) then
-				res[#res + 1] = '1'
-			else
-				res[#res + 1] = '0'
-			end
-		end
-	end
+  if bigendian then
+    for i = nbits - 1, 0, -1 do
+      if b.isset(value, i) then
+        res[#res + 1] = '1'
+      else
+        res[#res + 1] = '0'
+      end
+    end
+  else
+    for i = 0, nbits - 1 do
+      if b.isset(value, i) then
+        res[#res + 1] = '1'
+      else
+        res[#res + 1] = '0'
+      end
+    end
+  end
 
-	return table.concat(res)
+  return table.concat(res)
 end
 
 local Flags = prototype {}
