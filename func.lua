@@ -22,6 +22,14 @@ function func.dec (n, c)
   end
 end
 
+function func.add (a, b)
+  return a + b
+end
+
+function func.mul (a, b)
+  return a * b
+end
+
 function func.transpose (a, b)
   return b, a
 end
