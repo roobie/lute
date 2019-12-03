@@ -60,4 +60,7 @@ tap:run()
 return {
   vec2 = vec2;
   vec2i = vec2i;
+  vec2eq = function (a, b)
+    return a.x == b.x and a.y == b.y
+  end;
 }
