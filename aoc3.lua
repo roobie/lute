@@ -1,12 +1,16 @@
 
+require('_test_prelude')
 local inspect = require('inspect')
 local prototype = require('prototype')
 local fmt = require('fmt')
 local strings = require('strings')
 local tables = require('tables')
 local func = require('func')
+local StopWatch = require('stopwatch')
 local linalg = require('linalg')
 local vec2i = linalg.vec2i
+
+local sw = StopWatch.new()
 
 local function vec2iFromString (str)
   local x, y = unpack(strings.split(str, ';'))
@@ -71,6 +75,7 @@ local function trace (id, wire, index, fromPoint, accumulator, accumulatorKeyed)
   return trace(id, wire, index+1, p, accumulator, accumulatorKeyed)
 end
 
+sw:reset()
 local origin = vec2i(0, 0)
 local traces = {}
 local keyedPoints = {}
@@ -121,10 +126,33 @@ do -- find intersections
     end
   end
   print('Closest intersection =', closest)
-end
+  fmt.printf('# Time elapsed: %f ms', sw:millis())
 
-local Map = prototype {}
-function Map.new ()
-  return Map {}
-end
 
+  sw:reset()
+  function stepsToIntersection (intersection, trace)
+    for i = 1,#trace do
+      if linalg.vec2eq(trace[i], intersection) then
+        return i - 1
+      end
+    end
+  end
+
+  local leastSteps = nil
+  for _, intersection in ipairs(intersections) do
+    local totalSteps = 0
+    for _, trace in ipairs(traces) do
+      -- print(inspect(trace))
+      local steps = stepsToIntersection(intersection, trace)
+      totalSteps = totalSteps + steps
+    end
+    -- print(intersection, totalSteps)
+    if leastSteps == nil then
+      leastSteps = totalSteps
+    elseif totalSteps < leastSteps then
+      leastSteps = totalSteps
+    end
+  end
+  print('Intersection closest path: ', leastSteps)
+  fmt.printf('# Time elapsed: %f ms', sw:millis())
+end
