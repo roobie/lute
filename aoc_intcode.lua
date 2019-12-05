@@ -14,6 +14,30 @@ local MOCK = false
 -- local MOCK = true
 -- mockIO is used if MOCK is true. Index 1 is input and index 2 is output
 local mockIO = {}
+local onMockOutput = function (...)
+  print(...)
+end
+local function setOnMockOutput (fn)
+  onMockOutput = fn
+end
+
+-- Maybe TODO: onMockInput
+
+local function enableMockIO ()
+  MOCK = true
+end
+
+local function disableMockIO ()
+  MOCK = false
+end
+
+local function setMockInput (v)
+  mockIO[1] = v
+end
+
+local function readMockOutput (v)
+  return mockIO[2]
+end
 
 local function getValue (memory, arg, mode)
   if mode == 0 then -- position mode
@@ -40,12 +64,22 @@ local instructions = {
     name = 'add';
     parameterCount = 3;
     compute = function (memory, instructionPointer, modes)
+      local arg1 = getArgValue(memory, instructionPointer, 1, modes)
+      local arg2 = getArgValue(memory, instructionPointer, 2, modes)
       local resultAddr = memory[instructionPointer+3]
 
-      memory[resultAddr + 1] =
-        getArgValue(memory, instructionPointer, 1, modes)
-        +
-        getArgValue(memory, instructionPointer, 2, modes)
+      memory[resultAddr + 1] = arg1 + arg2
+
+      if VERBOSE then
+        fmt.printf('Add: %s', inspect {
+                     instructionPointer = instructionPointer,
+                     arg1 = arg1,
+                     arg2 = arg2,
+                     resultAddr = resultAddr,
+                     valueAtResultAddr = memory[resultAddr + 1],
+                     newInstructionPointer = instructionPointer + 4
+        })
+      end
 
       return instructionPointer + 4
     end;
@@ -90,6 +124,9 @@ local instructions = {
       local val = getArgValue(memory, instructionPointer, 1, modes)
       if MOCK then
         mockIO[2] = val
+        if type(onMockOutput) == 'function' then
+          onMockOutput(val)
+        end
       else
         io.write(val, '\n')
       end
@@ -101,12 +138,22 @@ local instructions = {
     name = 'jump-if-true';
     parameterCount = 2;
     compute = function (memory, instructionPointer, modes)
-      local val = getArgValue(memory, instructionPointer, 1, modes)
-      if val == 0 then
-        return instructionPointer + 2
+      local arg1 = getArgValue(memory, instructionPointer, 1, modes)
+      if arg1 == 0 then
+        return instructionPointer + 3
       else
-        local addr = getArgValue(memory, instructionPointer, 2, modes)
-        return addr + 1
+        local resultAddr = getArgValue(memory, instructionPointer, 2, modes)
+
+        if VERBOSE then
+          fmt.printf('JumpIfTrue: %s', inspect {
+                       instructionPointer = instructionPointer,
+                       arg1 = arg1,
+                       resultAddr = resultAddr,
+                       valueAtResultAddr = memory[resultAddr + 1],
+          })
+        end
+
+        return resultAddr + 1
       end
     end
   };
@@ -117,7 +164,7 @@ local instructions = {
     compute = function (memory, instructionPointer, modes)
       local val = getArgValue(memory, instructionPointer, 1, modes)
       if val ~= 0 then
-        return instructionPointer + 2
+        return instructionPointer + 3
       else
         local addr = getArgValue(memory, instructionPointer, 2, modes)
         return addr + 1
@@ -153,6 +200,16 @@ local instructions = {
       else
         memory[resultAddr + 1] = 0
       end
+
+      if VERBOSE then
+        fmt.printf('Equal: %s', inspect {
+                     instructionPointer = instructionPointer,
+                     arg1 = arg1,
+                     arg2 = arg2,
+                     resultAddr = resultAddr,
+                     valueAtResultAddr = memory[resultAddr + 1],
+        })
+      end
       return instructionPointer + 4
     end
   };
@@ -179,6 +236,9 @@ local function parseOpcode (opcodeAndModes)
 end
 
 local function compute (memory, zeroBasedInstructionPointer)
+  if VERBOSE then
+    assert(type(memory[1]) == 'number', 'Memory must be numbers')
+  end
   if zeroBasedInstructionPointer == nil then
     zeroBasedInstructionPointer = 0
   end
@@ -199,12 +259,18 @@ local function compute (memory, zeroBasedInstructionPointer)
       'instruction is nil! %s', inspect {
         opcodeAndModes = opcodeAndModes,
         opcode = opcode,
-        modes = modes
+        modes = modes,
+        memory = memory,
+        oneBasedInstructionPointer = oneBasedInstructionPointer,
+        zeroBasedInstructionPointer = zeroBasedInstructionPointer,
   }))
   if VERBOSE then
     fmt.printf('Operation: %s', inspect {
                  opcode = opcode,
-                 modes = modes
+                 instruction = instruction.name,
+                 modes = modes,
+                 memory = memory,
+                 oneBasedInstructionPointer = oneBasedInstructionPointer,
     })
   end
   local newOneBasedInstructionPointer = instruction.compute(
@@ -281,6 +347,7 @@ tap:addTest(
     test:equal(mem[1], 1)
 end)
 
+enableMockIO()
 if MOCK then
   tap:addTest(
     'IO',
@@ -290,10 +357,50 @@ if MOCK then
       local res1 = compute({3, 1, 4, 1, 99}, 0)
       test:equal(mockIO[2], 123)
   end)
+
+  tap:addTest(
+    'IO2',
+    function (test)
+      mockIO[1] = 5
+      mockIO[2] = 0
+      compute {
+        3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
+        1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,
+        999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99
+      }
+      test:equal(mockIO[2], 999)
+
+      mockIO[1] = 8
+      mockIO[2] = 0
+      compute {
+        3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
+        1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,
+        999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99
+      }
+      test:equal(mockIO[2], 1000)
+
+      mockIO[1] = 9
+      mockIO[2] = 0
+      compute {
+        3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
+        1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,
+        999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99
+      }
+      test:equal(mockIO[2], 1001)
+  end)
 end
 
 tap:run()
+disableMockIO()
 
 return {
-  compute = compute
+  compute = compute;
+  enableMockIO = enableMockIO;
+  disableMockIO = disableMockIO;
+  setMockInput = setMockInput;
+  readMockOutput = readMockOutput;
+  setVerbose = function (b)
+    VERBOSE = b
+  end;
+  setOnMockOutput = setOnMockOutput;
 }

@@ -12,10 +12,30 @@ local vec2i = linalg.vec2i
 
 local intcode = require('aoc_intcode')
 
-local inputFile = io.open('aoc5-input.txt')
-local inputText = inputFile:read('*l')
-inputFile:close()
+local function getInput ()
+  local inputFile = io.open('aoc5-input.txt')
+  local inputText = inputFile:read('*l')
+  inputFile:close()
 
-local input = strings.split(inputText, ',')
+  local input = tables.map(
+    strings.split(inputText, ','),
+    function (a)
+      return tonumber(a)
+  end)
 
-intcode.compute(input, 0)
+  return input
+end
+
+intcode.enableMockIO()
+intcode.setOnMockOutput(function (...)
+  print(...)
+end)
+
+intcode.setMockInput(1)
+intcode.compute(getInput(), 0)
+-- print('Result: ', intcode.readMockOutput())
+
+intcode.setMockInput(5)
+-- intcode.setVerbose(true)
+intcode.compute(getInput(), 0)
+-- print('Result: ', intcode.readMockOutput())
