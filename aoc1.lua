@@ -121,8 +121,8 @@ local acc = 0
 for _, line in ipairs(lines) do
   if line ~= nil and line ~= '' then
     local fuel = calcFuel(line, 0)
-    print(line, fuel)
+    -- print(line, fuel)
     acc = acc + fuel
   end
 end
-print(acc)
+print('Answer: ', acc)

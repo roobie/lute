@@ -58,7 +58,7 @@ do
   memory.program[2] = 12
   memory.program[3] = 2
   local result = compute(memory)
-  print(result)
+  print('Answer A: ', result)
 end
 
 do
@@ -75,7 +75,7 @@ do
       break
     end
     for verb = 0,99 do
-      print('Trying', 'noun:', noun, 'verb:', verb)
+      -- print('Trying', 'noun:', noun, 'verb:', verb)
       local memory = {
         program = getProgram(noun, verb);
         index = 1;
@@ -83,7 +83,7 @@ do
       local result = compute(memory)
       if result == targetOutput then
         found = true
-        print(inspect {
+        print('Answer B: ', inspect {
                 result = result,
                 noun = noun,
                 verb = verb,

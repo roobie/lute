@@ -104,20 +104,6 @@ do -- find intersections
       end
     end
   end
-  -- for i, trace in ipairs(traces) do
-  --   for j = i+1,#traces do
-  --     for _, p1 in ipairs(trace) do
-  --       io.write('.')
-  --       for _, p2 in ipairs(traces[j]) do
-  --         if p1:equal(p2) and (not p1:equal(origin)) then
-  --           -- print('Intersection', p1, p2)
-  --           table.insert(intersections, p1)
-  --         end
-  --       end
-  --     end
-  --   end
-  --   print('Big loop is done')
-  -- end
 
   local closest = intersections[1]
   for _, p in ipairs(intersections) do

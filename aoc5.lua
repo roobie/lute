@@ -32,10 +32,12 @@ intcode.setOnMockOutput(function (...)
 end)
 
 intcode.setMockInput(1)
+print('Answer A:')
 intcode.compute(getInput(), 0)
 -- print('Result: ', intcode.readMockOutput())
 
 intcode.setMockInput(5)
 -- intcode.setVerbose(true)
+print('Answer B:')
 intcode.compute(getInput(), 0)
 -- print('Result: ', intcode.readMockOutput())
