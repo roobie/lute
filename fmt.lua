@@ -1,3 +1,4 @@
+-- local inspect = require('inspect') -- TODO: add dump and printfInspect
 local fmt = {}
 
 function fmt.printf (fmt, ...)
