@@ -9,8 +9,9 @@ local func = require('func')
 local tap = require('tap').new {name='Intcode'}
 
 local DEBUG = true
--- local MOCK = false
-local MOCK = true
+local VERBOSE = false
+local MOCK = false
+-- local MOCK = true
 -- mockIO is used if MOCK is true. Index 1 is input and index 2 is output
 local mockIO = {}
 
@@ -36,7 +37,7 @@ end
 
 local instructions = {
   ['1'] = {
-    name = "add";
+    name = 'add';
     parameterCount = 3;
     compute = function (memory, instructionPointer, modes)
       local resultAddr = memory[instructionPointer+3]
@@ -51,7 +52,7 @@ local instructions = {
   };
 
   ['2'] = {
-    name = "mul";
+    name = 'mul';
     parameterCount = 3;
     compute = function (memory, instructionPointer, modes)
       local resultAddr = memory[instructionPointer+3]
@@ -66,7 +67,7 @@ local instructions = {
   };
 
   ['3'] = {
-    name = "input";
+    name = 'input';
     parameterCount = 1;
     compute = function (memory, instructionPointer, modes)
       local result1Addr = memory[instructionPointer+1]
@@ -83,21 +84,81 @@ local instructions = {
   };
 
   ['4'] = {
-    name = "output";
+    name = 'output';
     parameterCount = 1;
     compute = function (memory, instructionPointer, modes)
-      local arg1Addr = memory[instructionPointer+1]
+      local val = getArgValue(memory, instructionPointer, 1, modes)
       if MOCK then
-        mockIO[2] = memory[arg1Addr+1]
+        mockIO[2] = val
       else
-        io.write(memory[arg1Addr+1], '\n')
+        io.write(val, '\n')
       end
       return instructionPointer + 2
     end
   };
 
+  ['5'] = {
+    name = 'jump-if-true';
+    parameterCount = 2;
+    compute = function (memory, instructionPointer, modes)
+      local val = getArgValue(memory, instructionPointer, 1, modes)
+      if val == 0 then
+        return instructionPointer + 2
+      else
+        local addr = getArgValue(memory, instructionPointer, 2, modes)
+        return addr + 1
+      end
+    end
+  };
+
+  ['6'] = {
+    name = 'jump-if-false';
+    parameterCount = 2;
+    compute = function (memory, instructionPointer, modes)
+      local val = getArgValue(memory, instructionPointer, 1, modes)
+      if val ~= 0 then
+        return instructionPointer + 2
+      else
+        local addr = getArgValue(memory, instructionPointer, 2, modes)
+        return addr + 1
+      end
+    end
+  };
+
+  ['7'] = {
+    name = 'less-than';
+    parameterCount = 3;
+    compute = function (memory, instructionPointer, modes)
+      local arg1 = getArgValue(memory, instructionPointer, 1, modes)
+      local arg2 = getArgValue(memory, instructionPointer, 2, modes)
+      local resultAddr = memory[instructionPointer+3]
+      if arg1 < arg2 then
+        memory[resultAddr + 1] = 1
+      else
+        memory[resultAddr + 1] = 0
+      end
+      return instructionPointer + 4
+    end
+  };
+
+  ['8'] = {
+    name = 'equal';
+    parameterCount = 3;
+    compute = function (memory, instructionPointer, modes)
+      local arg1 = getArgValue(memory, instructionPointer, 1, modes)
+      local arg2 = getArgValue(memory, instructionPointer, 2, modes)
+      local resultAddr = memory[instructionPointer+3]
+      if arg1 == arg2 then
+        memory[resultAddr + 1] = 1
+      else
+        memory[resultAddr + 1] = 0
+      end
+      return instructionPointer + 4
+    end
+  };
+
   ['99'] = {
-    name = "halt";
+    name = 'halt';
     parameterCount = 0;
     compute = function ()
       error('Halt')
@@ -118,6 +179,10 @@ local function parseOpcode (opcodeAndModes)
 end
 
 local function compute (memory, zeroBasedInstructionPointer)
+  if zeroBasedInstructionPointer == nil then
+    zeroBasedInstructionPointer = 0
+  end
+
   local oneBasedInstructionPointer = zeroBasedInstructionPointer + 1
   local opcodeAndModes = memory[oneBasedInstructionPointer]
 
@@ -128,7 +193,20 @@ local function compute (memory, zeroBasedInstructionPointer)
   end
 
   local instruction = instructions[tostring(opcode)]
-  assert(instruction ~= nil, string.format('instruction is nil, %s - %s', opcodeAndModes, opcode))
+  assert(
+    instruction ~= nil,
+    string.format(
+      'instruction is nil! %s', inspect {
+        opcodeAndModes = opcodeAndModes,
+        opcode = opcode,
+        modes = modes
+  }))
+  if VERBOSE then
+    fmt.printf('Operation: %s', inspect {
+                 opcode = opcode,
+                 modes = modes
+    })
+  end
   local newOneBasedInstructionPointer = instruction.compute(
     memory,
     oneBasedInstructionPointer,
@@ -156,14 +234,51 @@ tap:addTest(
 end)
 
 tap:addTest(
-  'Intrisics',
+  'jump-if-true',
   function (test)
-    local t = {1}
-    tables.padEnd(t, 3, 0)
-    test:equal(#t, 3)
-    test:equal(t[1], 1)
-    test:equal(t[2], 0)
-    test:equal(t[3], 0)
+    local res, mem = compute {
+      1105, 1, 4,    -- jump-if-true (1, 4)
+      99,            -- HALT (this one should not happen)
+      1001, 2, 5, 0, -- add(@2, 5) => 0
+      99,            -- HALT
+    }
+    test:equal(res, 9)
+    test:equal(mem[1], 9)
+end)
+
+tap:addTest(
+  'jump-if-false',
+  function (test)
+    local res, mem = compute {
+        1106, 0, 4,    -- jump-if-true (1, 4)
+        99,            -- HALT (this one should not happen)
+        1001, 2, 5, 0, -- add(@2, 5) => 0
+        99,            -- HALT
+      }
+    test:equal(res, 9)
+    test:equal(mem[1], 9)
+end)
+
+tap:addTest(
+  'less-than',
+  function (test)
+    local res, mem = compute {
+      1107, 80, 90, 0, -- [0] = lessThan(80, 90)
+      99,              -- HALT
+    }
+    test:equal(res, 1)
+    test:equal(mem[1], 1)
+end)
+
+tap:addTest(
+  'equal',
+  function (test)
+    local res, mem = compute {
+      1108, 80, 80, 0, -- [0] = equal(80, 80)
+      99,              -- HALT
+    }
+    test:equal(res, 1)
+    test:equal(mem[1], 1)
 end)
 
 if MOCK then
@@ -178,3 +293,7 @@ if MOCK then
 end
 
 tap:run()
+
+return {
+  compute = compute
+}
