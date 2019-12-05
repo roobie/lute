@@ -143,4 +143,22 @@ function tables.collect (iterable)
   return result
 end
 
+function tables.reverse (tbl)
+  local acc = {}
+  for i = #tbl, 1, -1 do
+    acc[#acc+1] = tbl[i]
+  end
+  return acc
+end
+
+function tables.padEnd (tbl, minLength, value)
+  if #tbl < minLength then
+    for i = #tbl + 1, minLength do
+      tbl[i] = value
+    end
+  end
+
+  return tbl
+end
+
 return tables
