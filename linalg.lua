@@ -43,7 +43,7 @@ local vec2i_mt = {
       return a.x == b.x and a.y == b.y
     end;
     manhattanDistance = function (a, b)
-      if b == nil then
+      if not b then
         b = vec2i(0, 0)
       end
       return math.abs(a.x - b.x) + math.abs(a.y - b.y)
