@@ -9,75 +9,95 @@ local func = require('func')
 local tap = require('tap').new {name='Intcode'}
 
 local DEBUG = true
+-- local MOCK = false
+local MOCK = true
+-- mockIO is used if MOCK is true. Index 1 is input and index 2 is output
+local mockIO = {}
 
-local function getValue (memory, value, mode)
-  if mode == 0 then -- addr mode
-    return memory[value + 1]
+local function getValue (memory, arg, mode)
+  if mode == 0 then -- position mode
+    return memory[arg + 1]
   elseif mode == 1 then -- immediate mode
-    return value
+    return arg
   else
     error('Unknown mode')
   end
 end
 
+local function getArgValue (memory, instructionPointer, offset, modes)
+  local mode = modes[offset]
+  assert(mode ~= nil, 'mode cannot be nil')
+
+  local arg = memory[instructionPointer + offset]
+  assert(arg ~= nil, 'arg cannot be nil')
+
+  return getValue(memory, arg, mode)
+end
+
 local instructions = {
-  ['1'] = { -- add
+  ['1'] = {
+    name = "add";
     parameterCount = 3;
     compute = function (memory, instructionPointer, modes)
-      -- these are zero based
-      local arg1 = memory[instructionPointer+1]
-      local arg1Mode = modes[1]
-      assert(arg1Mode ~= nil)
-
-      local arg2 = memory[instructionPointer+2]
-      local arg2Mode = modes[2]
-      assert(arg2Mode ~= nil)
-
       local resultAddr = memory[instructionPointer+3]
 
       memory[resultAddr + 1] =
-        -- memory[arg1Addr + 1] + memory[arg2Addr + 1]
-        getValue(memory, arg1, arg1Mode) + getValue(memory, arg2, arg2Mode)
+        getArgValue(memory, instructionPointer, 1, modes)
+        +
+        getArgValue(memory, instructionPointer, 2, modes)
 
       return instructionPointer + 4
     end;
   };
 
-  ['2'] = { -- mul
+  ['2'] = {
+    name = "mul";
     parameterCount = 3;
     compute = function (memory, instructionPointer, modes)
-      local arg1Addr = memory[instructionPointer+1]
-      local arg2Addr = memory[instructionPointer+2]
       local resultAddr = memory[instructionPointer+3]
 
       memory[resultAddr + 1] =
-        memory[arg1Addr + 1] * memory[arg2Addr + 1]
+        getArgValue(memory, instructionPointer, 1, modes)
+        *
+        getArgValue(memory, instructionPointer, 2, modes)
 
       return instructionPointer + 4
     end;
   };
 
-  ['3'] = { -- input
+  ['3'] = {
+    name = "input";
     parameterCount = 1;
     compute = function (memory, instructionPointer, modes)
       local result1Addr = memory[instructionPointer+1]
-      local value = io.read()
+      local value
+      if MOCK then
+        value = mockIO[1]
+      else
+        value = io.read()
+      end
 
-      memory[result1Addr+1] = tonumber(value)
-      return instructionPointer + 1
+      memory[result1Addr + 1] = tonumber(value)
+      return instructionPointer + 2
     end
   };
 
-  ['4'] = { -- output
+  ['4'] = {
+    name = "output";
     parameterCount = 1;
     compute = function (memory, instructionPointer, modes)
       local arg1Addr = memory[instructionPointer+1]
-      io.write(memory[arg1Addr+1], '\n')
-      return instructionPointer + 1
+      if MOCK then
+        mockIO[2] = memory[arg1Addr+1]
+      else
+        io.write(memory[arg1Addr+1], '\n')
+      end
+      return instructionPointer + 2
     end
   };
 
-  ['99'] = { -- halt
+  ['99'] = {
+    name = "halt";
     parameterCount = 0;
     compute = function ()
       error('Halt')
@@ -108,6 +128,7 @@ local function compute (memory, zeroBasedInstructionPointer)
   end
 
   local instruction = instructions[tostring(opcode)]
+  assert(instruction ~= nil, string.format('instruction is nil, %s - %s', opcodeAndModes, opcode))
   local newOneBasedInstructionPointer = instruction.compute(
     memory,
     oneBasedInstructionPointer,
@@ -144,5 +165,16 @@ tap:addTest(
     test:equal(t[2], 0)
     test:equal(t[3], 0)
 end)
+
+if MOCK then
+  tap:addTest(
+    'IO',
+    function (test)
+      mockIO[1] = 123
+      mockIO[2] = 0
+      local res1 = compute({3, 1, 4, 1, 99}, 0)
+      test:equal(mockIO[2], 123)
+  end)
+end
 
 tap:run()
