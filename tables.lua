@@ -109,6 +109,15 @@ function tables.skip (tbl, count)
   return result
 end
 
+function tables.take (tbl, count)
+  local result = {}
+  for i = 1, math.min(#tbl, count) do
+    result[#result + 1] = tbl[i]
+  end
+
+  return result
+end
+
 function tables.get (tbl, path, default)
   -- todo numbers
   if type(path) ~= 'table' then
@@ -159,6 +168,15 @@ function tables.padEnd (tbl, minLength, value)
   end
 
   return tbl
+end
+
+function tables.createIndex (tbl)
+  local index = {}
+  for i, v in ipairs(tbl) do
+    index[v] = i
+  end
+
+  return index
 end
 
 return tables
