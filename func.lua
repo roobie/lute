@@ -6,6 +6,9 @@
 
 local func = {}
 
+function func.nop ()
+end
+
 function func.inc (n, c)
   if c == nil then
     return n + 1

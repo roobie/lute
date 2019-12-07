@@ -1633,6 +1633,9 @@ export.func = (function ()
 
 local func = {}
 
+function func.nop ()
+end
+
 function func.inc (n, c)
   if c == nil then
     return n + 1
@@ -1764,6 +1767,10 @@ function func.bind (fn, ...)
     end
     return fn(unpack(args2))
   end
+end
+
+function func.transform (object, transformation)
+  return transformation(object)
 end
 
 return func
@@ -2290,7 +2297,8 @@ function template.compile (tmpl)
   end
 
   local function escape (str)
-    return string.gsub(str, '"', '\\"')
+    local gsub = string.gsub
+    return gsub(gsub(str, '"', '\\"'), '\n', '\\n')
   end
 
   local i = 1
