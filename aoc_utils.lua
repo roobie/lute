@@ -1,5 +1,12 @@
 local utils = {}
 
+function utils.getInputText (fileName)
+  local fd = io.open(fileName)
+  local text = fd:read('*a')
+  fd:close()
+  return text
+end
+
 function utils.getInputLines (fileName, transformLine)
   local lines = {}
   for line in io.lines(fileName) do

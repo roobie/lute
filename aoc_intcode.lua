@@ -17,8 +17,14 @@ local mockIO = {}
 local onMockOutput = function (...)
   print(...)
 end
+local onMockInput = function (...)
+  return mockIO[1]
+end
 local function setOnMockOutput (fn)
   onMockOutput = fn
+end
+local function setOnMockInput (fn)
+  onMockInput = fn
 end
 
 -- Maybe TODO: onMockInput
@@ -107,7 +113,10 @@ local instructions = {
       local result1Addr = memory[instructionPointer+1]
       local value
       if MOCK then
-        value = mockIO[1]
+        value = onMockInput()
+        if VERBOSE then
+          fmt.printf('Read: %s', value)
+        end
       else
         value = io.read()
       end
@@ -287,7 +296,7 @@ tap:addTest(
   function (test)
     local res1 = compute({1,9,10,3,2,3,11,0,99,30,40,50}, 0)
     test:equal(res1, 3500,
-           fmt.printf('Expected(%d) : Actual(%d)', 3500, res1))
+           string.format('Expected(%d) : Actual(%d)', 3500, res1))
 
   local res2, res22 = compute({1,1,1,4,99,5,6,0,99}, 0)
   test:equal(strings.join(res22, ','), '30,1,1,4,2,5,6,0,99')
@@ -403,4 +412,5 @@ return {
     VERBOSE = b
   end;
   setOnMockOutput = setOnMockOutput;
+  setOnMockInput = setOnMockInput;
 }
