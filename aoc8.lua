@@ -9,6 +9,7 @@ require('fun')() -- pollute _G
 
 local tap = require('tap').new {name='AoC 8'}
 
+local VERBOSE = false
 local imgWidth, imgHeight = 25, 6
 
 local function getInput()
@@ -30,9 +31,11 @@ local function getStructuredData ()
       local yoffset = (y - 1) * imgWidth
       for x=1,imgWidth do
         layer[y][x] = tonumber(imgData[loffset+yoffset+x])
-        fmt.printf(
-          'layer[l=%d][y=%d][x=%d] = imgData[%d]',
-          l, y, x, loffset+yoffset+x)
+        if VERBOSE then
+          fmt.printf(
+            'layer[l=%d][y=%d][x=%d] = imgData[%d]',
+            l, y, x, loffset+yoffset+x)
+        end
       end
     end
   end
@@ -68,7 +71,11 @@ tap:addTest(
         leastZeroLayer = acc
       end
     end
-    fmt.dump(leastZeroLayer)
+
+    if VERBOSE then
+      fmt.dump(leastZeroLayer)
+    end
+
     local oneDigitCount = 0
     local twoDigitCount = 0
     for i, v in ipairs(leastZeroLayer) do
@@ -79,6 +86,45 @@ tap:addTest(
       end
     end
     fmt.printf('Answer: %d', oneDigitCount * twoDigitCount)
+end)
+
+local function renderImage (layers)
+  local output = {}
+  for y=1,imgHeight do
+    output[y] = {}
+    for x=1,imgWidth do
+      output[y][x] = 2 -- transparent
+      for li, l in ipairs(layers) do
+        if l[y][x] ~= 2 then
+          output[y][x] = l[y][x]
+          break
+        end
+      end
+    end
+  end
+  return output
+end
+
+local function displayImage (output)
+  for y=1,imgHeight do
+    for x=1,imgWidth do
+      if output[y][x] == 1 then
+        io.write('#')
+      elseif output[y][x] == 0 then
+        io.write('.')
+      end
+    end
+    io.write('\n')
+  end
+end
+
+tap:addTest(
+  'B',
+  function (test)
+    local layers = getStructuredData()
+    local output = renderImage(layers)
+
+    displayImage(output)
 end)
 
 tap:run()
