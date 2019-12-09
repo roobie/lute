@@ -12,7 +12,7 @@ local program = {
 local lastVal = nil
 local c = computer(program, {
            name = 'A',
-           verbosity = 2,
+           verbosity = 0,
            out = function (v)
              print(v)
              lastVal = v

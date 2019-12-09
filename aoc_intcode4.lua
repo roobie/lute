@@ -59,6 +59,15 @@ function computer (program, options)
     end
   end
 
+  local function getResultAddr (offset, modes)
+    local arg = memory[zeroPtr + 1 + offset]
+    if (modes[offset] == nil) or (modes[offset] == 0) then
+      return arg
+    elseif modes[offset] == 2 then
+      return relOffset + arg
+    end
+  end
+
   local instructions = {
     ['1'] = {
       name = 'add';
@@ -66,7 +75,7 @@ function computer (program, options)
       compute = function (modes)
         local arg1, arg1Meta = getArgValue(1, modes)
         local arg2, arg2Meta = getArgValue(2, modes)
-        local resultAddr = memory[zeroPtr + 1 + 3]
+        local resultAddr = getResultAddr(3, modes)
 
         if options.verbosity > 1 then
           fmt.printf(
@@ -85,7 +94,7 @@ function computer (program, options)
       compute = function (modes)
         local arg1, arg1Meta = getArgValue(1, modes)
         local arg2, arg2Meta = getArgValue(2, modes)
-        local resultAddr = memory[zeroPtr + 1 + 3]
+        local resultAddr = getResultAddr(3, modes)
 
         if options.verbosity > 1 then
           fmt.printf(
@@ -102,12 +111,7 @@ function computer (program, options)
       name = 'input';
       parameterCount = 1;
       compute = function (modes)
-        local result1Addr
-        if (modes[1] == nil) or (modes[1] == 0) then
-          result1Addr = memory[zeroPtr + 1 + 1]
-        elseif modes[1] == 2 then
-          result1Addr = memory[relOffset + 1 + memory[zeroPtr + 2]]
-        end
+        local resultAddr = getResultAddr(1, modes)
 
         zeroPtr = zeroPtr + 2
 
@@ -121,10 +125,10 @@ function computer (program, options)
           end
 
           if options.verbosity > 1 then
-            fmt.printf('[%s].(input): @%s=%s', options.name, result1Addr, value)
+            fmt.printf('[%s].(input): @%s=%s', options.name, resultAddr + 1, value)
           end
 
-          memory[result1Addr + 1] = tonumber(value)
+          memory[resultAddr + 1] = tonumber(value)
         end
       end;
     };
@@ -198,7 +202,7 @@ function computer (program, options)
       compute = function (modes)
         local arg1, arg1Meta = getArgValue(1, modes)
         local arg2, arg2Meta = getArgValue(2, modes)
-        local resultAddr = memory[zeroPtr + 1 + 3]
+        local resultAddr = getResultAddr(3, modes)
 
         if options.verbosity > 1 then
           fmt.printf(
@@ -222,7 +226,7 @@ function computer (program, options)
       compute = function (modes)
         local arg1, arg1Meta = getArgValue(1, modes)
         local arg2, arg2Meta = getArgValue(2, modes)
-        local resultAddr = memory[zeroPtr + 1 + 3]
+        local resultAddr = getResultAddr(3, modes)
 
         if options.verbosity > 1 then
           fmt.printf(
