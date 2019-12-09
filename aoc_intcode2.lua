@@ -15,6 +15,8 @@ local function getValue (memory, arg, mode)
     return memory[arg + 1]
   elseif mode == 1 then -- immediate mode
     return arg
+  elseif mode == 2 then -- relative mode
+    error('Not implemented')
   else
     error('Unknown mode')
   end
