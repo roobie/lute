@@ -129,7 +129,7 @@ assert(a.stride == 1)
 a = slice.make(int_t, {1, 2, 3, 4, 5})
 assert(a[0] == 1)
 b = slice.make(int_t, 100, 100)
-print(b)
+-- print(b)
 for i=0,a.len-1 do
   b[i]=a[i]
 end
@@ -138,11 +138,11 @@ end
 -- for i=a.len,99 do
 --   b[i] = 0
 -- end
-print(b)
+-- print(b)
 
-local data = require('aoc9_input')
-local prg = slice.make(ffi.typeof('int64_t'), data())
-print(prg)
+-- local data = require('aoc9_input')
+-- local prg = slice.make(ffi.typeof('int64_t'), data())
+-- print(prg)
 
 return slice
 

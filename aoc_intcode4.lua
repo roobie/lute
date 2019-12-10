@@ -27,7 +27,9 @@ function computer (program, options)
   local relOffset = 0
 
   local function expandMemory (minSize)
-    fmt.printf('[%s]: Expanding memory to: %d', options.name, minSize)
+    if options.verbosity > 0 then
+      fmt.printf('[%s]: Expanding memory to: %d', options.name, minSize)
+    end
     for i = #memory + 1, minSize do
       memory[i] = memory[i] or 0
     end
@@ -307,7 +309,9 @@ function computer (program, options)
 
   function api.run ()
     local ok, result, memory = false, nil, nil
+    local count = 0
     while coroutine.status(api.cycle) ~= 'dead' do
+      count = count + 1
       ok, result = coroutine.resume(api.cycle)
       if not ok then
         fmt.dump(result)
@@ -315,6 +319,10 @@ function computer (program, options)
       elseif type(result) == 'function' then
         return result
       end
+    end
+
+    if options.verbosity > 0 then
+      fmt.printf('Cycle count: %d', count)
     end
 
     return result

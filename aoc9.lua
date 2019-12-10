@@ -19,7 +19,6 @@ tap:addTest(
                          name = 'A',
                          verbosity = 0,
                          out = function (v)
-                           print(v)
                            lastVal = v
                          end
     })
@@ -37,7 +36,6 @@ tap:addTest(
                          name = 'B',
                          verbosity = 0,
                          out = function (v)
-                           print(v)
                            lastVal = v
                          end
     })
