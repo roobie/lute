@@ -57,52 +57,6 @@ local function parse (dat)
   return out
 end
 
-local function bresenham(x1, y1, x2, y2, callback)
-  local delta_x = x2 - x1
-  local ix = delta_x > 0 and 1 or -1
-  local delta_x = 2 * math.abs(delta_x)
-
-  local delta_y = y2 - y1
-  local iy = delta_y > 0 and 1 or -1
-  local delta_y = 2 * math.abs(delta_y)
-
-  callback(x1, y1)
-
-  if delta_x >= delta_y then
-    local err = delta_y - delta_x / 2
-
-    while x1 ~= x2 do
-      if (err > 0) or ((err == 0) and (ix > 0)) then
-        err = err - delta_x
-        y1 = y1 + iy
-      end
-
-      err = err + delta_y
-      x1 = x1 + ix
-
-      if callback(x1, y1) then
-        break
-      end
-    end
-  else
-    local err = delta_x - delta_y / 2
-
-    while y1 ~= y2 do
-      if (err > 0) or ((err == 0) and (iy > 0)) then
-        err = err - delta_y
-        x1 = x1 + ix
-      end
-
-      err = err + delta_x
-      y1 = y1 + iy
-
-      if callback(x1, y1) then
-        break
-      end
-    end
-  end
-end
-
 local algorithmicTemplate = [[
 #.........
 ...A......
@@ -195,58 +149,8 @@ tap:addTest(
 ....#
 ...##]]
     local map = parse(mapData)
-    -- local map = parse(algorithmicTemplate)
-    -- print('AAA')
-    -- traceLine(1, 1, 5, 5)
-    -- print('BBB')
-    -- traceLine(1, 1, 15, 18)
-    -- local dump = function (x, y)
-    --   fmt.dump {x=x; y=y}
-    -- end
-    -- traceLine(4, 5, 5, 1, dump)
-    -- traceLine(4, 5, 1, 2, dump)
 
-    -- for _,pair in ipairs(frameOf(map)) do
-    --   map[pair[2]][pair[1]] = '!'
-    -- end
-    -- for _,row in ipairs(map) do
-    --   print(table.concat(row, ''))
-    -- end
-
-    -- local acc = {a={};b={};c={};d={};e={};f={};g={}}
-    -- local x, y = 1, 1
-    -- for _, c in strings.iter(algorithmicTemplate) do
-    --   if c == '\n' then
-    --     y = y + 1
-    --     x = 1
-    --   else
-    --     c = string.lower(c)
-    --     if acc[c] then
-    --       table.insert(acc[c], {x-1,y-1})
-    --     end
-    --     x = x + 1
-    --   end
-    -- end
-    -- fmt.dump(acc)
-
-    local function memoize2 (fn)
-      local cache = {}
-      return function (a, b)
-        if cache[a] then
-          if cache[a][b] then
-            return cache[a][b]
-          else
-            cache[a][b] = fn(a, b)
-          end
-        else
-          cache[a] = {}
-          cache[a][b] = fn(a, b)
-        end
-        return cache[a][b]
-      end
-    end
-
-    local withinBounds = memoize2(function (x, y)
+    local withinBounds = func.memoize2(function (x, y)
         return (0 < x)
           and (x <= #map[1])
           and (0 < y)
@@ -254,35 +158,33 @@ tap:addTest(
     end)
 
     -- local c = 1
-    local function spiralFromBox (nwcx, nwcy, secx, secy, sz, acc, callbackIfBlocked)
+    local function spiralFromBox (nwcx, nwcy, secx, secy, center, acc, callbackIfBlocked)
       if (not withinBounds(nwcx, nwcy)) and (not withinBounds(secx, secy)) then
         return acc
       end
       local frame = getFrame(nwcx-1, nwcy-1, secx+1, secy+1)
-      -- for _,pair in ipairs(frame) do
-      --   if withinBounds(pair[1], pair[2]) then
-      --     map[pair[2]][pair[1]]=c
-      --   else print(pair[1], pair[2])
-      --   end
-      -- end
-      -- c=c+1
-      local p, x, y
+      local p, x, y, dx, dy, q
+      local cx, cy = center[1], center[2]
       for i = 1,#frame do
         p = frame[i]
         x, y = p[1], p[2]
-        if callbackIfBlocked(p[1], p[2]) then
-          acc.index.x[x] = acc.index.x[x] or {}
-          table.insert(acc.index.x[x], y)
-
-          acc.index.y[y] = acc.index.y[y] or {}
-          table.insert(acc.index.y[y], x)
+        dx, dy = cx-x,cy-y
+        q = numerics.gcd(dx,dy)
+        print(dx, dy, numerics.gcd(dx,dy))
+        if acc.index[q] == nil then
+          if withinBounds(x, y) and callbackIfBlocked(p[1], p[2]) then
+          end
         end
       end
-      return spiralFromBox(nwcx-1, nwcy-1, secx+1, secy+1, acc, callbackIfBlocked)
+      return spiralFromBox(nwcx-1, nwcy-1, secx+1, secy+1, center, acc, callbackIfBlocked)
     end
 
-    local v = spiralFromBox(3, 3, 3, 3, 1, {index={x={};y={}}}, function (x, y)
-                              return map[y][x] == '#'
+    local v = spiralFromBox(3, 3, 3, 3, {3,3}, {index={}}, function (x, y)
+                              local res = map[y][x] == '#'
+                              if res then
+                                map[y][x] = 'S'
+                              end
+                              return res
     end)
 
     for _,row in ipairs(map) do
