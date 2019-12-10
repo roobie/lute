@@ -194,8 +194,8 @@ tap:addTest(
 #####
 ....#
 ...##]]
-    -- local map = parse(mapData)
-    local map = parse(algorithmicTemplate)
+    local map = parse(mapData)
+    -- local map = parse(algorithmicTemplate)
     -- print('AAA')
     -- traceLine(1, 1, 5, 5)
     -- print('BBB')
@@ -253,28 +253,38 @@ tap:addTest(
           and (y <= #map)
     end)
 
-    local c = 1
-    local function spiralFromBox (nwcx, nwcy, secx, secy, acc)
+    -- local c = 1
+    local function spiralFromBox (nwcx, nwcy, secx, secy, sz, acc, callbackIfBlocked)
       if (not withinBounds(nwcx, nwcy)) and (not withinBounds(secx, secy)) then
         return acc
       end
-      -- for x=nwcx-1,secx+1 do
-      --   for y=nwcy-1,secy+1 do
+      local frame = getFrame(nwcx-1, nwcy-1, secx+1, secy+1)
+      -- for _,pair in ipairs(frame) do
+      --   if withinBounds(pair[1], pair[2]) then
+      --     map[pair[2]][pair[1]]=c
+      --   else print(pair[1], pair[2])
       --   end
       -- end
-      local frame = getFrame(nwcx-1, nwcy-1, secx+1, secy+1)
-      -- fmt.dump(frame)
-      for _,pair in ipairs(frame) do
-        if withinBounds(pair[1], pair[2]) then
-          map[pair[2]][pair[1]]=c
-        else print(pair[1], pair[2])
+      -- c=c+1
+      local p, x, y
+      for i = 1,#frame do
+        p = frame[i]
+        x, y = p[1], p[2]
+        if callbackIfBlocked(p[1], p[2]) then
+          acc.index.x[x] = acc.index.x[x] or {}
+          table.insert(acc.index.x[x], y)
+
+          acc.index.y[y] = acc.index.y[y] or {}
+          table.insert(acc.index.y[y], x)
         end
       end
-      c=c+1
-      return spiralFromBox(nwcx-1, nwcy-1, secx+1, secy+1)
+      return spiralFromBox(nwcx-1, nwcy-1, secx+1, secy+1, acc, callbackIfBlocked)
     end
 
-    local v = spiralFromBox(3, 3, 3, 3, {})
+    local v = spiralFromBox(3, 3, 3, 3, 1, {index={x={};y={}}}, function (x, y)
+                              return map[y][x] == '#'
+    end)
+
     for _,row in ipairs(map) do
       print(table.concat(row, ''))
     end
