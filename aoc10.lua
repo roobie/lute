@@ -6,6 +6,8 @@ local prototype = require('prototype')
 local fmt = require('fmt')
 local strings = require('strings')
 local tables = require('tables')
+local func = require('func')
+local numerics = require('numerics')
 
 local tap = require('tap').new {name = 'AoC 10'}
 
@@ -57,52 +59,6 @@ local function parse (dat)
   return out
 end
 
-local function bresenham(x1, y1, x2, y2, callback)
-  local delta_x = x2 - x1
-  local ix = delta_x > 0 and 1 or -1
-  local delta_x = 2 * math.abs(delta_x)
-
-  local delta_y = y2 - y1
-  local iy = delta_y > 0 and 1 or -1
-  local delta_y = 2 * math.abs(delta_y)
-
-  callback(x1, y1)
-
-  if delta_x >= delta_y then
-    local err = delta_y - delta_x / 2
-
-    while x1 ~= x2 do
-      if (err > 0) or ((err == 0) and (ix > 0)) then
-        err = err - delta_x
-        y1 = y1 + iy
-      end
-
-      err = err + delta_y
-      x1 = x1 + ix
-
-      if callback(x1, y1) then
-        break
-      end
-    end
-  else
-    local err = delta_x - delta_y / 2
-
-    while y1 ~= y2 do
-      if (err > 0) or ((err == 0) and (iy > 0)) then
-        err = err - delta_y
-        x1 = x1 + ix
-      end
-
-      err = err + delta_x
-      y1 = y1 + iy
-
-      if callback(x1, y1) then
-        break
-      end
-    end
-  end
-end
-
 local algorithmicTemplate = [[
 #.........
 ...A......
@@ -121,19 +77,95 @@ local function traceLine (x1, y1, x2, y2, callback)
   print(dx, dy)
 end
 
+local function frameOf (map)
+  local acc = {}
+  for y=1,#map do
+    table.insert(acc, {1, y})
+    table.insert(acc, {#map[1], y})
+  end
+  for x=2,#map[1]-1 do
+    table.insert(acc, {x, 1})
+    table.insert(acc, {x, #map})
+  end
+  return acc
+end
+
+local function getFrame (x1, y1, x2, y2)
+  local acc = {}
+  for y=y1,y2 do
+    table.insert(acc, {x1, y})
+    table.insert(acc, {x2, y})
+  end
+  for x=x1+1,x2-1 do
+    table.insert(acc, {x, y1})
+    table.insert(acc, {x, y2})
+  end
+  return acc
+end
+
 tap:addTest(
   'One',
   function (test)
-    local mapData = [[
-.#..#
-.....
-#####
-....#
-...##]]
+--     local mapData = [[
+-- .#..#
+-- .....
+-- #####
+-- ....#
+-- ...##]]
     local map = parse(mapData)
-    traceLine(4, 5, 5, 1, function (x, y)
-                fmt.dump {x=x; y=y}
+    -- local map = parse(algorithmicTemplate)
+
+    local withinBounds = func.memoize2(function (x, y)
+        return (0 < x)
+          and (x <= #map[1])
+          and (0 < y)
+          and (y <= #map)
     end)
+
+    -- local c = 1
+    local function spiralFromBox (nwcx, nwcy, secx, secy, center, acc, callbackIfBlocked)
+      if (not withinBounds(nwcx, nwcy)) and (not withinBounds(secx, secy)) then
+        return acc
+      end
+      local frame = getFrame(nwcx-1, nwcy-1, secx+1, secy+1)
+      local p, x, y, dx, dy, q
+      local cx, cy = center[1], center[2]
+      for i = 1,#frame do
+        p = frame[i]
+        x, y = p[1], p[2]
+        dx, dy = cx-x,cy-y
+        q = math.atan2(dy,dx)
+        if acc.index[q] == nil then
+          if withinBounds(x, y) and callbackIfBlocked(p[1], p[2]) then
+            acc.index[q]=true
+            acc[#acc+1]={x,y}
+          end
+        end
+      end
+      return spiralFromBox(nwcx-1, nwcy-1, secx+1, secy+1, center, acc, callbackIfBlocked)
+    end
+
+    local max, bx, by = 0, 0, 0
+    for y=1,#map do
+      for x=1,#map[1] do
+        local v = spiralFromBox(x, y, x, y, {x,y}, {index={}}, function (x, y)
+                                  local res = map[y][x] == '#'
+                                  -- if res then
+                                  --   map[y][x] = 'S'
+                                  -- end
+                                  return res
+                               end)
+        if #v > max then
+          max = #v
+          bx, by = x, y
+        end
+      end
+    end
+    print(max, bx, by)
+
+    for _,row in ipairs(map) do
+      print(table.concat(row, ''))
+    end
 end)
 
 tap:run()
