@@ -22,6 +22,14 @@ function func.dec (n, c)
   end
 end
 
+function func.add (a, b)
+  return a + b
+end
+
+function func.mul (a, b)
+  return a * b
+end
+
 function func.transpose (a, b)
   return b, a
 end
@@ -141,6 +149,39 @@ end
 
 function func.transform (object, transformation)
   return transformation(object)
+end
+
+function func.memoize1 (fn)
+  local cache = {}
+  return function (a)
+    assert(a ~= nil, 'Params cannot be nil')
+
+    if cache[a] then
+      cache[a] = fn(a)
+    end
+
+    return cache[a]
+  end
+end
+
+function func.memoize2 (fn)
+  local cache = {}
+  return function (a, b)
+    assert(a ~= nil, 'Params cannot be nil')
+    assert(b ~= nil, 'Params cannot be nil')
+
+    if cache[a] then
+      if cache[a][b] then
+        return cache[a][b]
+      else
+        cache[a][b] = fn(a, b)
+      end
+    else
+      cache[a] = {}
+      cache[a][b] = fn(a, b)
+    end
+    return cache[a][b]
+  end
 end
 
 return func

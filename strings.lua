@@ -274,6 +274,7 @@ function template.compile (tmpl)
     error('argument #1 must be a string')
   end
 
+  local gsub = string.gsub
   local code = {}
   local len = #tmpl
 
@@ -308,7 +309,6 @@ function template.compile (tmpl)
   end
 
   local function escape (str)
-    local gsub = string.gsub
     return gsub(gsub(str, '"', '\\"'), '\n', '\\n')
   end
 
@@ -329,7 +329,7 @@ function template.compile (tmpl)
   -- code[#code + 1] = '}'
   code = table.concat(code, ',')
   code = string.format('return {%s}', code)
-  print(code)
+  -- print(code)
   local renderer = load(code)
   if renderer == nil then
     error('Invalid template definition')

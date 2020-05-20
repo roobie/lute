@@ -9,12 +9,14 @@ tap:addTest(
   'rg',
   function (test)
     local rg = Program.new('rg')
-    local searchvalue = 'rx'
+    local searchvalue = [[local rg = Program.new('rg')]]
+    local results = {}
     rg:run({searchvalue, './'}, function (file)
         for line in file:lines() do
-          print(line)
+          table.insert(results, line)
         end
     end)
+    test:isTrue(#results > 0)
 end)
 
 return tap

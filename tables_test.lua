@@ -74,6 +74,17 @@ tap:addTest(
 end)
 
 tap:addTest(
+  'tables.padEnd',
+  function (test)
+    local t = {1}
+    tables.padEnd(t, 3, 0)
+    test:equal(#t, 3)
+    test:equal(t[1], 1)
+    test:equal(t[2], 0)
+    test:equal(t[3], 0)
+end)
+
+tap:addTest(
   'tables.merge',
   function (test)
     local t = tables {a=1}

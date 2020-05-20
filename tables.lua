@@ -109,6 +109,15 @@ function tables.skip (tbl, count)
   return result
 end
 
+function tables.take (tbl, count)
+  local result = {}
+  for i = 1, math.min(#tbl, count) do
+    result[#result + 1] = tbl[i]
+  end
+
+  return result
+end
+
 function tables.get (tbl, path, default)
   -- todo numbers
   if type(path) ~= 'table' then
@@ -141,6 +150,33 @@ function tables.collect (iterable)
     result[#result + 1] = v
   end
   return result
+end
+
+function tables.reverse (tbl)
+  local acc = {}
+  for i = #tbl, 1, -1 do
+    acc[#acc+1] = tbl[i]
+  end
+  return acc
+end
+
+function tables.padEnd (tbl, minLength, value)
+  if #tbl < minLength then
+    for i = #tbl + 1, minLength do
+      tbl[i] = value
+    end
+  end
+
+  return tbl
+end
+
+function tables.createIndex (tbl)
+  local index = {}
+  for i, v in ipairs(tbl) do
+    index[v] = i
+  end
+
+  return index
 end
 
 return tables
