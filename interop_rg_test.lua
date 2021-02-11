@@ -9,7 +9,7 @@ tap:addTest(
   'rg',
   function (test)
     local rg = Program.new('rg')
-    local searchvalue = [[local rg = Program.new('rg')]]
+    local searchvalue = [['local Program = interop.Program']]
     local results = {}
     rg:run({searchvalue, './'}, function (file)
         for line in file:lines() do

@@ -35,9 +35,16 @@ vec2 = ffi.metatype('vec2_t', vec2_mt)
 local vec2i
 local vec2i_mt = {
   __add = function (a, b) return vec2i(a.x + b.x, a.y + b.y) end;
-  __len = function (a) return math.sqrt(a.x * a.x + a.y * a.y) end;
+  __len = function (a)
+    -- TODO use C maths
+    local ax = tonumber(a.x)
+    local ay = tonumber(a.y)
+    return math.sqrt(ax * ax + ay * ay)
+  end;
   __eq = vec2eq;
-  __tostring = function (a) return string.format('%d;%d', a.x, a.y) end;
+  __tostring = function (a)
+    return string.format('%d;%d', tonumber(a.x), tonumber(a.y))
+  end;
   __index = {
     equal = function (a, b)
       return a.x == b.x and a.y == b.y
@@ -46,7 +53,13 @@ local vec2i_mt = {
       if not b then
         b = vec2i(0, 0)
       end
-      return math.abs(a.x - b.x) + math.abs(a.y - b.y)
+
+      -- TODO use C maths
+      local ax = tonumber(a.x)
+      local ay = tonumber(a.y)
+      local bx = tonumber(b.x)
+      local by = tonumber(b.y)
+      return math.abs(ax - bx) + math.abs(ay - by)
     end;
   };
 }
