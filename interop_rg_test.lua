@@ -3,15 +3,19 @@ local inspect = require('inspect')
 local fmt = require('fmt')
 local tap = require('tap').new {name = 'interop_rg.lua'}
 local interop = require('interop')
+local ffi = require('ffi')
 local Program = interop.Program
 
 tap:addTest(
-  'rg',
+  'ls/dir',
   function (test)
-    local rg = Program.new('rg')
-    local searchvalue = [['local Program = interop.Program']]
+    local ls = 'ls'
+    if ffi.os == 'Windows' then
+      ls = 'dir'
+    end
+    local prog = Program.new(ls)
     local results = {}
-    rg:run({searchvalue, './'}, function (file)
+    prog:run(nil, function (file)
         for line in file:lines() do
           table.insert(results, line)
         end

@@ -27,7 +27,11 @@ function Program.executableName (self)
 end
 
 function Program.run (self, args, pipeFn)
-  local invocation = string.format('%s %s', self:executableName(), table.concat(args, ' '))
+  local invocation = string.format(
+    '%s %s',
+    self:executableName(),
+    table.concat(args or {}, ' ')
+  )
   local file = io.popen(invocation, 'r')
   xpcall(
     bind(pipeFn, file),

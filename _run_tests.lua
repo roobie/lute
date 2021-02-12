@@ -31,6 +31,7 @@ local tests = {
   require('avl_tree_test');
   require('strings_test');
   require('linalg_test');
+  require('charsepval_test');
   require('interop_rg_test');
 }
 
