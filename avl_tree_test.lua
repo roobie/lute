@@ -107,6 +107,9 @@ tap:addTest(
     local t = Tree.new()
     t:insert(10, 'a')
     t:insert(20, 'b')
+    for i = 1, 9 do
+      t:insert(10 + i, 'c')
+    end
     dump(t._root)
 
     test:isTrue(t:has(10))

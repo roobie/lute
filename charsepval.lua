@@ -21,11 +21,29 @@ return function (configuration)
   end
 
 
+  --- Simple implementation that can be used for encoding csv stuff into a
+  --- string. The buffer field contains the result.
+  --[[ @example
+    local out = csv.stringSink()
+    csv.encodeHeaders(out, headers)
+    print(out.buffer)
+  ]]
+  function csv.stringSink ()
+    return {
+      buffer = '';
+      write = function (self, data)
+        self.buffer = self.buffer .. data
+      end;
+    }
+  end
+
+
   --- Determines whether the index is the last index of the supplied sequential
   --- table.
   local function isLast (index, tbl)
     return index == #tbl
   end
+
 
   --- Encodes the headers using the current configuration.
   --- Destination is a file like object. It must support the `write` method.
@@ -39,6 +57,7 @@ return function (configuration)
     destination:write(csv.newline)
   end
 
+
   --- Encodes a single table using the supplied headers and using the current
   --- configuration.
   --- Destination is a file like object. It must support the `write` method.
@@ -51,6 +70,7 @@ return function (configuration)
     end
   end
 
+
   --- Encodes all tables in the supplied sequence using the supplied headers and
   --- using the current configuration.
   --- Destination is a file like object. It must support the `write` method.
@@ -62,6 +82,7 @@ return function (configuration)
       end
     end
   end
+
 
   -- end of module
   return csv

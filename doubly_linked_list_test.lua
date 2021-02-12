@@ -178,7 +178,20 @@ tap:addTest(
     for _, n in l:iterReverse() do
       s=s..tostring(n)
     end
-    test:equal(s, '4321')
+    test:equal(s, '1432')
+
+    l:moveHead(-2)
+    s = ''
+    for _, n in l:iterReverse() do
+      s=s..tostring(n)
+    end
+    test:equal(s, '3214')
+
+    s = ''
+    for _, n in l:iter() do
+      s=s..tostring(n)
+    end
+    test:equal(s, '3412')
 
 
     l = List.new()

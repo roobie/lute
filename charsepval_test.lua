@@ -20,18 +20,13 @@ tap:addTest(
     local headers = csv.keys(data[1])
     table.sort(headers)
 
-    local out = {
-      val = '';
-      write = function (self, data)
-        self.val = self.val .. data
-      end;
-    }
+    local out = csv.stringSink()
 
     csv.encodeHeaders(out, headers)
-    test:equal(out.val, 'a;b_')
+    test:equal(out.buffer, 'a;b_')
 
     csv.encodeTables(out, headers, data)
-    test:equal(out.val, 'a;b_1;2_3;4')
+    test:equal(out.buffer, 'a;b_1;2_3;4')
 end)
 
 return tap

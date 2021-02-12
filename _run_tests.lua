@@ -11,7 +11,6 @@ Tap.printHeader()
 local tests = {
   require('quick_sort_test');
   require('linked_list_test');
-  require('doubly_linked_list_test');
   require('min_heap_test');
   require('collections_test');
   require('tables_test');
@@ -28,11 +27,12 @@ local tests = {
   require('pubsub_test');
   require('func_test');
   require('randy_test');
-  require('avl_tree_test');
   require('linalg_test');
   require('charsepval_test');
   require('interop_rg_test');
   require('strings_test');
+  require('avl_tree_test');
+  require('doubly_linked_list_test');
 }
 
 local sw = StopWatch.new()

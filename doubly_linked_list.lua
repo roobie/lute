@@ -126,7 +126,7 @@ function List.iterReverse (self)
     end
   end
 
-  local currentNode = self._head._prevNode
+  local currentNode = self._head --._prevNode
   local index = self:length()
   return function ()
     if index >= 1 then
@@ -215,6 +215,7 @@ function List.findAt (self, index)
   local found = false
   local reference = nil
   local currentNode = self._head
+
   local count = 1
   -- FIXME: if index is greater than half of length, we should iterate
   -- backwards. Still linear, but hey.
@@ -319,10 +320,14 @@ end;
 -- Inserts an element in a new node at `index`, if the index is in the interval
 -- [1,#list+1]
 function List.insertAt(self, index, element)
-  if self._length == 0 and index == 1 then
-    self._head = Node.new(element)
-    self._length = 1
-    return
+  if self._length == 0 then
+    if index == 1 then
+      self._head = Node.new(element)
+      self._length = 1
+      return
+    else
+      error('Out of bounds')
+    end
   end
   local currentNode = self:findAt(index)
   if currentNode == nil then
@@ -439,12 +444,15 @@ end
 -- `new` creates a new List. The first and only argument is optional, and if it
 -- is a table, all (ipairs) elements of the table will be appended in order to
 -- the new list
-function List.new (elements) local list = List {
-_length = 0; _head = nil; }
+function List.new (elements)
+  local list = List {
+    _length = 0;
+    _head = nil;
+  }
 
   if type(elements) == 'table' then
     for _, element in ipairs(elements) do
-      list:add(element)
+      list:append(element)
     end
   end
 
@@ -457,7 +465,7 @@ end
 -- @example
 -- local l1 = List.new()
 -- local l2 = List.cons(1, l1)
--- assert(l1:length() == 0 and l2:length() == 1 and l1 ~= l2, 'A new list was created')
+-- assert(l1:length() == 0 and l2:length() == 1 and l1 ~= l2)
 function List.cons (element, list)
   local result = List.new()
   result:append(element)
