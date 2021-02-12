@@ -154,7 +154,7 @@ end
 function func.memoize1 (fn)
   local cache = {}
   return function (a)
-    assert(a ~= nil, 'Params cannot be nil')
+    assert(a ~= nil, 'argument #1 must not be nil')
 
     if cache[a] then
       cache[a] = fn(a)
@@ -167,8 +167,8 @@ end
 function func.memoize2 (fn)
   local cache = {}
   return function (a, b)
-    assert(a ~= nil, 'Params cannot be nil')
-    assert(b ~= nil, 'Params cannot be nil')
+    assert(a ~= nil, 'argument #1 must not be nil')
+    assert(b ~= nil, 'argument #2 must not be nil')
 
     if cache[a] then
       if cache[a][b] then

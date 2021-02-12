@@ -29,10 +29,10 @@ local tests = {
   require('func_test');
   require('randy_test');
   require('avl_tree_test');
-  require('strings_test');
   require('linalg_test');
   require('charsepval_test');
   require('interop_rg_test');
+  require('strings_test');
 }
 
 local sw = StopWatch.new()

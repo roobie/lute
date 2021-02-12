@@ -8,6 +8,8 @@ local curried = require('curried')
 
 local StopWatch = require('stopwatch')
 
+local __disablePerfTests = false
+
 local function dump (what)
   print(inspect(what))
 end
@@ -175,7 +177,7 @@ tap:addTest(
     local sw = StopWatch.new()
 
     local function performTest (name, fn)
-      if true then
+      if __disablePerfTests then
         return 0
       end
       sw:reset()
@@ -244,6 +246,15 @@ tap:addTest(
     end)
 end)
 
+-- TODO: this fails
+-- tap:addTest(
+--   'strings.template.nested',
+--   function (test)
+--     local result = strings.template.interpolate(
+--       '%["%[test]]]"..name]', {name='World'})
+--     test:equal(result, '%[test]]]World')
+-- end)
+
 tap:addTest(
   'strings.withLpeg',
   function (test)
@@ -260,11 +271,6 @@ tap:addTest(
       test:isFalse(P ~= nil)
       test:equal(result, 1)
     end
-end)
-
-tap:addTest(
-  'strings.XYZ',
-  function (test)
 end)
 
 return tap
