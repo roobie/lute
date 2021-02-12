@@ -33,6 +33,7 @@ local tests = {
   require('strings_test');
   require('avl_tree_test');
   require('doubly_linked_list_test');
+  require('slice_test');
 }
 
 local sw = StopWatch.new()
