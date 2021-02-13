@@ -1,0 +1,2 @@
+
+: foreach *.fnl |> luajit fennel-0.8.1/fennel --compile %f > %o |> %B.lua

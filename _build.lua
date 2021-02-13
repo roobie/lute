@@ -1,10 +1,8 @@
-
-local fennel
-do
-  file = assert(io.open('fennel-0.8.1/fennel.lua', 'rb'))
-  fennel = assert(loadstring(assert(file:read("*a")), filename))()
-  file:close()
-end
+--[[
+  TODO: move this stuff into a build directory, and modularize it,
+  so TUP can do the heavy lifting. I.e. make it so that the prelude
+  can be invoked by itself, the module wrapping as well, etc.
+]]
 
 local hash = ''
 local strings = require('strings')
@@ -18,17 +16,11 @@ local commit = git:run({'log -1'}, function (gitLog)
   print('Commit hash:', hash)
 end)
 
-local fennelModules = {
-  'charsepval_temp';
-}
-for _, mod in ipairs(fennelModules) do
-  local file = assert(io.open(mod..'.fnl', 'rb'))
-  local luaCode = fennel["compile-string"](assert(file:read('*a')))
-  file:close()
-  file = assert(io.open(mod..'.lua', 'w+'))
-  file:write(luaCode)
-  file:close()
-end
+-- compiles the fennel modules
+local tup = interop.Program.new('tup')
+tup:run({}, function (output)
+    print(output:read("*a"))
+end)
 
 local modules = {
   'inspect';
