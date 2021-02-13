@@ -41,3 +41,5 @@
 
 # Test that the output file is loadable by lua
 : dist/lute.lua |> luajit dist/lute.lua |>
+
+.gitignore
