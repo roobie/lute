@@ -5,5 +5,5 @@
 ##### Do not edit.
 .tup
 /.gitignore
-/charsepval_temp.lua
+#/charsepval.lua
 /dist

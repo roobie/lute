@@ -1,3 +1,11 @@
+--[[
+  This module is invoked as part of the building of the monolith.
+
+  It should be invoked as such:
+  <lua-program>
+
+  It will write the monolith prelude to standard output.
+]]
 local hash = ''
 local strings = require('strings')
 local tables = require('tables')
@@ -9,10 +17,16 @@ local commit = git:run({'log -1'}, function (gitLog)
     hash = strings.split(commitLine, ' ')[2]
 end)
 
+local function void ()
+  return nil
+end
+
 local initContents = ''
 for line in io.lines('init.lua') do
   if line:find('return') == 1 then
+    void()
   elseif line:find('}') == 1 then
+    void()
   else
     initContents = initContents..line..'\n'
   end
