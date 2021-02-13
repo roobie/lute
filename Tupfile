@@ -29,6 +29,7 @@
   curried.lua                  \
   pubsub.lua                   \
   utf8.lua                     \
+  bluefin.lua                  \
   charsepval.lua               \
   misc.lua                     \
   |> luajit build/module_wrapper.lua %B > %o |> dist/temp/modules.lua
