@@ -1,2 +1,38 @@
 
 : foreach *.fnl |> luajit fennel-0.8.1/fennel --compile %f > %o |> %B.lua
+
+: build/prelude.lua |> luajit build/prelude.lua > %o |> dist/temp/lute_prelude.lua
+
+: inspect.lua                  \
+  fun.lua                      \
+  func.lua                     \
+  prototype.lua                \
+  fmt.lua                      \
+  flags.lua                    \
+  strings.lua                  \
+  tables.lua                   \
+  quick_sort.lua               \
+  quick_sort_generic.lua       \
+  table_list.lua               \
+  avl_tree.lua                 \
+  linked_list.lua              \
+  doubly_linked_list.lua       \
+  max_heap.lua                 \
+  min_heap.lua                 \
+  quad_tree.lua                \
+  queue.lua                    \
+  set.lua                      \
+  stack.lua                    \
+  curried.lua                  \
+  pubsub.lua                   \
+  utf8.lua                     \
+  charsepval_temp.lua          \
+  misc.lua                     \
+  |> luajit build/module_wrapper.lua %B > %o |> dist/temp/modules.lua
+
+: dist/temp/lute_prelude.lua   \
+  dist/temp/modules.lua        \
+  build/outro.txt              \
+  |> cat %f > %o |> dist/lute.lua
+
+: dist/lute.lua |> luajit dist/lute.lua |>

@@ -1,4 +1,3 @@
-
 return {
   _VERSION = 'v1.0.0',
   _DESCRIPTION = 'A Lua library that tries to fill the gaps',

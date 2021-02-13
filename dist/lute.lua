@@ -1,9 +1,8 @@
----! Built from commit hash: f17174a365e010d589df6f1540c14ae60b9380b8
+---! Built from commit hash: ac6058835fd002b558da02300e987dab75e8fb4d
 
 local export = {
 --- The license defined here might be overridden in each underlying module.
 --- Please refer to each module to see whether that is the case.
-
   _VERSION = 'v1.0.0',
   _DESCRIPTION = 'A Lua library that tries to fill the gaps',
   _URL = 'https://github.com/roobie/lute',
@@ -223,7 +222,7 @@ local function require (name)
 end
 
 
---- BEGIN inspect.lua
+--- BEGIN inspect
 export.inspect = (function ()
 local inspect ={
   _VERSION = 'inspect.lua 3.1.0',
@@ -560,10 +559,9 @@ setmetatable(inspect, { __call = function(_, ...) return inspect.inspect(...) en
 return inspect
 
 end)()
---- END inspect.lua
+--- END inspect
 
-
---- BEGIN fun.lua
+--- BEGIN fun
 export.fun = (function ()
 ---
 --- Lua Fun - a high-performance functional programming library for LuaJIT
@@ -1625,10 +1623,9 @@ setmetatable(exports, {
 return exports
 
 end)()
---- END fun.lua
+--- END fun
 
-
---- BEGIN func.lua
+--- BEGIN func
 export.func = (function ()
 --[[
 
@@ -1819,10 +1816,9 @@ end
 return func
 
 end)()
---- END func.lua
+--- END func
 
-
---- BEGIN prototype.lua
+--- BEGIN prototype
 export.prototype = (function ()
 --[[
   A light weight implementation allowing creation of so called "prototypes"
@@ -1901,10 +1897,9 @@ end
 return prototype
 
 end)()
---- END prototype.lua
+--- END prototype
 
-
---- BEGIN fmt.lua
+--- BEGIN fmt
 export.fmt = (function ()
 local inspect = require('inspect') -- TODO: add dump and printfInspect
 
@@ -1929,10 +1924,9 @@ end
 return fmt
 
 end)()
---- END fmt.lua
+--- END fmt
 
-
---- BEGIN flags.lua
+--- BEGIN flags
 export.flags = (function ()
 
 local bit = require('bit')
@@ -2039,10 +2033,9 @@ end
 return Flags
 
 end)()
---- END flags.lua
+--- END flags
 
-
---- BEGIN strings.lua
+--- BEGIN strings
 export.strings = (function ()
 local F = require('func')
 
@@ -2439,10 +2432,9 @@ end
 return strings
 
 end)()
---- END strings.lua
+--- END strings
 
-
---- BEGIN tables.lua
+--- BEGIN tables
 export.tables = (function ()
 local prototype = require('prototype')
 local strings = require('strings')
@@ -2628,10 +2620,9 @@ end
 return tables
 
 end)()
---- END tables.lua
+--- END tables
 
-
---- BEGIN quick_sort.lua
+--- BEGIN quick_sort
 export.quick_sort = (function ()
 local function swap (tbl, i1, i2)
   local temp = tbl[i1]
@@ -2671,10 +2662,9 @@ end
 return quickSort
 
 end)()
---- END quick_sort.lua
+--- END quick_sort
 
-
---- BEGIN quick_sort_generic.lua
+--- BEGIN quick_sort_generic
 export.quick_sort_generic = (function ()
 --[[
 
@@ -2727,10 +2717,9 @@ end
 return quickSort
 
 end)()
---- END quick_sort_generic.lua
+--- END quick_sort_generic
 
-
---- BEGIN table_list.lua
+--- BEGIN table_list
 export.table_list = (function ()
 --[[
 
@@ -2949,10 +2938,9 @@ end
 return List
 
 end)()
---- END table_list.lua
+--- END table_list
 
-
---- BEGIN avl_tree.lua
+--- BEGIN avl_tree
 export.avl_tree = (function ()
 --[[
 
@@ -3216,10 +3204,9 @@ end
 return Tree
 
 end)()
---- END avl_tree.lua
+--- END avl_tree
 
-
---- BEGIN linked_list.lua
+--- BEGIN linked_list
 export.linked_list = (function ()
 local prototype = require('prototype')
 
@@ -3353,10 +3340,9 @@ end
 return List
 
 end)()
---- END linked_list.lua
+--- END linked_list
 
-
---- BEGIN doubly_linked_list.lua
+--- BEGIN doubly_linked_list
 export.doubly_linked_list = (function ()
 local prototype = require('prototype')
 
@@ -3840,10 +3826,9 @@ end
 return List
 
 end)()
---- END doubly_linked_list.lua
+--- END doubly_linked_list
 
-
---- BEGIN max_heap.lua
+--- BEGIN max_heap
 export.max_heap = (function ()
 --[[
 
@@ -3960,10 +3945,9 @@ end
 return MaxHeap
 
 end)()
---- END max_heap.lua
+--- END max_heap
 
-
---- BEGIN min_heap.lua
+--- BEGIN min_heap
 export.min_heap = (function ()
 --[[
   Pairing (min) heap. Used https://en.wikipedia.org/wiki/Pairing_heap as reference.
@@ -4083,10 +4067,9 @@ end
 return MinHeap
 
 end)()
---- END min_heap.lua
+--- END min_heap
 
-
---- BEGIN quad_tree.lua
+--- BEGIN quad_tree
 export.quad_tree = (function ()
 --[[
 
@@ -4288,10 +4271,9 @@ end
 return QTree
 
 end)()
---- END quad_tree.lua
+--- END quad_tree
 
-
---- BEGIN queue.lua
+--- BEGIN queue
 export.queue = (function ()
 --[[
 
@@ -4335,10 +4317,9 @@ end
 return Queue
 
 end)()
---- END queue.lua
+--- END queue
 
-
---- BEGIN set.lua
+--- BEGIN set
 export.set = (function ()
 local prototype = require('prototype')
 
@@ -4444,10 +4425,9 @@ end
 return Set
 
 end)()
---- END set.lua
+--- END set
 
-
---- BEGIN stack.lua
+--- BEGIN stack
 export.stack = (function ()
 --[[
 
@@ -4491,10 +4471,9 @@ end
 return Stack
 
 end)()
---- END stack.lua
+--- END stack
 
-
---- BEGIN curried.lua
+--- BEGIN curried
 export.curried = (function ()
 local tables = require('tables')
 
@@ -4526,10 +4505,9 @@ end
 return curried
 
 end)()
---- END curried.lua
+--- END curried
 
-
---- BEGIN pubsub.lua
+--- BEGIN pubsub
 export.pubsub = (function ()
 local List = require('doubly_linked_list')
 local prototype = require('prototype')
@@ -4565,10 +4543,9 @@ end
 return Pubsub
 
 end)()
---- END pubsub.lua
+--- END pubsub
 
-
---- BEGIN utf8.lua
+--- BEGIN utf8
 export.utf8 = (function ()
 -- $Id: utf8.lua 179 2009-04-03 18:10:03Z pasta $
 --
@@ -5617,10 +5594,9 @@ return {
 }
 
 end)()
---- END utf8.lua
+--- END utf8
 
-
---- BEGIN charsepval_temp.lua
+--- BEGIN charsepval_temp
 export.charsepval_temp = (function ()
 local function reduce(iterator, tbl, initial_value, transform)
   local accumulator = initial_value
@@ -5691,34 +5667,32 @@ end
 return _0_
 
 end)()
---- END charsepval_temp.lua
+--- END charsepval_temp
 
+--- BEGIN misc
+export.misc = (function ()
 
+local misc = {}
 
 --[[
-  inspect
-  fun
-  func
-  prototype
-  fmt
-  flags
-  strings
-  tables
-  quick_sort
-  quick_sort_generic
-  table_list
-  avl_tree
-  linked_list
-  doubly_linked_list
-  max_heap
-  min_heap
-  quad_tree
-  queue
-  set
-  stack
-  curried
-  pubsub
-  utf8
-  charsepval_temp
+
+  @example
+
+  local a = {b = {longName = {}}}
+  local refTo_longName = mutate(a.b.longName, function (o)
+    o.value = 1
+  end)
 ]]
+function misc.mutate (object, mutator)
+  mutator(object)
+  return object
+end
+
+return misc
+
+end)()
+--- END misc
+
+
 return export
+--EOF
