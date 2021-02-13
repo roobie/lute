@@ -1,4 +1,11 @@
 
+local fennel
+do
+  file = assert(io.open('fennel-0.8.1/fennel.lua', 'rb'))
+  fennel = assert(loadstring(assert(file:read("*a")), filename))()
+  file:close()
+end
+
 local hash = ''
 local strings = require('strings')
 local tables = require('tables')
@@ -10,6 +17,18 @@ local commit = git:run({'log -1'}, function (gitLog)
   hash = strings.split(commitLine, ' ')[2]
   print('Commit hash:', hash)
 end)
+
+local fennelModules = {
+  'charsepval_temp';
+}
+for _, mod in ipairs(fennelModules) do
+  local file = assert(io.open(mod..'.fnl', 'rb'))
+  local luaCode = fennel["compile-string"](assert(file:read('*a')))
+  file:close()
+  file = assert(io.open(mod..'.lua', 'w+'))
+  file:write(luaCode)
+  file:close()
+end
 
 local modules = {
   'inspect';
@@ -37,6 +56,7 @@ local modules = {
   -- 'stopwatch';
   -- 'tap';
   'utf8';
+  'charsepval_temp';
 }
 
 

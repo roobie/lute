@@ -1,4 +1,4 @@
----! Built from commit hash: c1663e36d77e7e2b3c66067306fceb9a67a9e7d0
+---! Built from commit hash: ecd66da85ceeed4f71ee6172e07e9b86e47a27ea
 
 local export = {
 --- The license defined here might be overridden in each underlying module.
@@ -1654,6 +1654,14 @@ function func.dec (n, c)
   end
 end
 
+function func.add (a, b)
+  return a + b
+end
+
+function func.mul (a, b)
+  return a * b
+end
+
 function func.transpose (a, b)
   return b, a
 end
@@ -1775,6 +1783,39 @@ function func.transform (object, transformation)
   return transformation(object)
 end
 
+function func.memoize1 (fn)
+  local cache = {}
+  return function (a)
+    assert(a ~= nil, 'argument #1 must not be nil')
+
+    if cache[a] then
+      cache[a] = fn(a)
+    end
+
+    return cache[a]
+  end
+end
+
+function func.memoize2 (fn)
+  local cache = {}
+  return function (a, b)
+    assert(a ~= nil, 'argument #1 must not be nil')
+    assert(b ~= nil, 'argument #2 must not be nil')
+
+    if cache[a] then
+      if cache[a][b] then
+        return cache[a][b]
+      else
+        cache[a][b] = fn(a, b)
+      end
+    else
+      cache[a] = {}
+      cache[a][b] = fn(a, b)
+    end
+    return cache[a][b]
+  end
+end
+
 return func
 
 end)()
@@ -1865,6 +1906,8 @@ end)()
 
 --- BEGIN fmt.lua
 export.fmt = (function ()
+local inspect = require('inspect') -- TODO: add dump and printfInspect
+
 local fmt = {}
 
 function fmt.printf (fmt, ...)
@@ -1877,6 +1920,10 @@ end
 
 function fmt.fprintf (fd, fmt, ...)
   fd:write(string.format(fmt, ...))
+end
+
+function fmt.dump (object)
+  print(inspect(object))
 end
 
 return fmt
@@ -2273,6 +2320,7 @@ function template.compile (tmpl)
     error('argument #1 must be a string')
   end
 
+  local gsub = string.gsub
   local code = {}
   local len = #tmpl
 
@@ -2307,7 +2355,6 @@ function template.compile (tmpl)
   end
 
   local function escape (str)
-    local gsub = string.gsub
     return gsub(gsub(str, '"', '\\"'), '\n', '\\n')
   end
 
@@ -2328,7 +2375,7 @@ function template.compile (tmpl)
   -- code[#code + 1] = '}'
   code = table.concat(code, ',')
   code = string.format('return {%s}', code)
-  print(code)
+  -- print(code)
   local renderer = load(code)
   if renderer == nil then
     error('Invalid template definition')
@@ -2508,6 +2555,15 @@ function tables.skip (tbl, count)
   return result
 end
 
+function tables.take (tbl, count)
+  local result = {}
+  for i = 1, math.min(#tbl, count) do
+    result[#result + 1] = tbl[i]
+  end
+
+  return result
+end
+
 function tables.get (tbl, path, default)
   -- todo numbers
   if type(path) ~= 'table' then
@@ -2540,6 +2596,33 @@ function tables.collect (iterable)
     result[#result + 1] = v
   end
   return result
+end
+
+function tables.reverse (tbl)
+  local acc = {}
+  for i = #tbl, 1, -1 do
+    acc[#acc+1] = tbl[i]
+  end
+  return acc
+end
+
+function tables.padEnd (tbl, minLength, value)
+  if #tbl < minLength then
+    for i = #tbl + 1, minLength do
+      tbl[i] = value
+    end
+  end
+
+  return tbl
+end
+
+function tables.createIndex (tbl)
+  local index = {}
+  for i, v in ipairs(tbl) do
+    index[v] = i
+  end
+
+  return index
 end
 
 return tables
@@ -3403,7 +3486,7 @@ function List.iterReverse (self)
     end
   end
 
-  local currentNode = self._head._prevNode
+  local currentNode = self._head --._prevNode
   local index = self:length()
   return function ()
     if index >= 1 then
@@ -3492,6 +3575,7 @@ function List.findAt (self, index)
   local found = false
   local reference = nil
   local currentNode = self._head
+
   local count = 1
   -- FIXME: if index is greater than half of length, we should iterate
   -- backwards. Still linear, but hey.
@@ -3596,10 +3680,14 @@ end;
 -- Inserts an element in a new node at `index`, if the index is in the interval
 -- [1,#list+1]
 function List.insertAt(self, index, element)
-  if self._length == 0 and index == 1 then
-    self._head = Node.new(element)
-    self._length = 1
-    return
+  if self._length == 0 then
+    if index == 1 then
+      self._head = Node.new(element)
+      self._length = 1
+      return
+    else
+      error('Out of bounds')
+    end
   end
   local currentNode = self:findAt(index)
   if currentNode == nil then
@@ -3716,12 +3804,15 @@ end
 -- `new` creates a new List. The first and only argument is optional, and if it
 -- is a table, all (ipairs) elements of the table will be appended in order to
 -- the new list
-function List.new (elements) local list = List {
-_length = 0; _head = nil; }
+function List.new (elements)
+  local list = List {
+    _length = 0;
+    _head = nil;
+  }
 
   if type(elements) == 'table' then
     for _, element in ipairs(elements) do
-      list:add(element)
+      list:append(element)
     end
   end
 
@@ -3734,7 +3825,7 @@ end
 -- @example
 -- local l1 = List.new()
 -- local l2 = List.cons(1, l1)
--- assert(l1:length() == 0 and l2:length() == 1 and l1 ~= l2, 'A new list was created')
+-- assert(l1:length() == 0 and l2:length() == 1 and l1 ~= l2)
 function List.cons (element, list)
   local result = List.new()
   result:append(element)
@@ -5529,6 +5620,79 @@ end)()
 --- END utf8.lua
 
 
+--- BEGIN charsepval_temp.lua
+export.charsepval_temp = (function ()
+local function reduce(iterator, tbl, initial_value, transform)
+  local accumulator = initial_value
+  for k, v in iterator(tbl) do
+    transform(accumulator, v, k)
+  end
+  return accumulator
+end
+local function mutate(root, key, transform)
+  local result = transform(root[key])
+  root[key] = result
+  return result
+end
+local function _0_(configuration)
+  local cfg = (configuration or {})
+  local csv = {newline = (cfg.newline or "\n"), separator = (cfg.separator or ",")}
+  csv.keys = function(atable)
+    local function _1_(a, _, k)
+      return table.insert(a, k)
+    end
+    return reduce(pairs, atable, {}, _1_)
+  end
+  csv["string-sink"] = function()
+    local function _1_(self, data)
+      local function _2_(v)
+        return (v .. data)
+      end
+      return mutate(self, "buffer", _2_)
+    end
+    return {buffer = "", write = _1_}
+  end
+  csv["stringSink"] = csv["string-sink"]
+  local function is_last(index, itable)
+    return (index == #itable)
+  end
+  csv["encode-headers"] = function(destination, headers)
+    for i, header in ipairs(headers) do
+      destination:write(header)
+      if not is_last(i, headers) then
+        destination:write(csv.separator)
+      end
+    end
+    return destination:write(csv.newline)
+  end
+  csv["encodeHeaders"] = csv["encode-headers"]
+  csv["encode-table"] = function(destination, headers, source)
+    for i, header in ipairs(headers) do
+      destination:write(source[header])
+      if not is_last(i, headers) then
+        destination:write(csv.separator)
+      end
+    end
+    return nil
+  end
+  csv["encodeTable"] = csv["encode-table"]
+  csv["encode-tables"] = function(destination, headers, sequence)
+    for i, source in ipairs(sequence) do
+      csv["encode-table"](destination, headers, source)
+      if not is_last(i, sequence) then
+        destination:write(csv.newline)
+      end
+    end
+    return nil
+  end
+  csv["encodeTables"] = csv["encode-tables"]
+  return csv
+end
+return _0_
+end)()
+--- END charsepval_temp.lua
+
+
 
 --[[
   inspect
@@ -5554,5 +5718,6 @@ end)()
   curried
   pubsub
   utf8
+  charsepval_temp
 ]]
 return export
