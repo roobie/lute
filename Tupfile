@@ -1,8 +1,11 @@
 
+# Compile all fennel modules. TODO: supply extra config for better debugging.
 : foreach *.fnl |> luajit fennel-0.8.1/fennel --compile %f > %o |> %B.lua
 
+# Generate the module prelude, which contains metadata stuffs.
 : build/prelude.lua |> luajit build/prelude.lua > %o |> dist/temp/lute_prelude.lua
 
+# Prepare and concat each separate module into one file.
 : inspect.lua                  \
   fun.lua                      \
   func.lua                     \
@@ -30,9 +33,11 @@
   misc.lua                     \
   |> luajit build/module_wrapper.lua %B > %o |> dist/temp/modules.lua
 
+# Concat the temporary files into a single file.
 : dist/temp/lute_prelude.lua   \
   dist/temp/modules.lua        \
   build/outro.txt              \
   |> cat %f > %o |> dist/lute.lua
 
+# Test that the output file is loadable by lua
 : dist/lute.lua |> luajit dist/lute.lua |>
