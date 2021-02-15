@@ -79,6 +79,19 @@ mt = {
     return s
   end;
 
+  --- Zero based iterator. Returns a function which
+  --- yields [index], [value-at-index].
+  iter = function (s)
+    local i = 0
+    return function ()
+      if i < s.len then
+        local index = i
+        i = i + 1
+        return index, s[index]
+      end
+    end
+  end;
+
   slice = function (s, i, j)
     if not i then i = 0 end
     if not j then j = s.len end

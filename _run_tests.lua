@@ -1,4 +1,8 @@
 
+local fennel = require('fennel.fennel')
+table.insert(package.loaders,
+             fennel.make_searcher({correlate=true}))
+
 require('_test_prelude')
 local Tap = require('tap')
 local printf = require('fmt').printf
@@ -27,13 +31,14 @@ local tests = {
   require('pubsub_test');
   require('func_test');
   require('randy_test');
-  require('linalg_test');
   require('interop_rg_test');
   require('strings_test');
   require('avl_tree_test');
   require('doubly_linked_list_test');
-  require('slice_test');
   require('charsepval_test');
+  require('fmt_test');
+  require('slice_test');
+  require('linalg_test');
 }
 
 local sw = StopWatch.new()
