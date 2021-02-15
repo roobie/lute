@@ -29,7 +29,8 @@
   curried.lua                  \
   pubsub.lua                   \
   utf8.lua                     \
-  charsepval_temp.lua          \
+  bluefin.lua                  \
+  charsepval.lua               \
   misc.lua                     \
   |> luajit build/module_wrapper.lua %B > %o |> dist/temp/modules.lua
 
@@ -41,3 +42,5 @@
 
 # Test that the output file is loadable by lua
 : dist/lute.lua |> luajit dist/lute.lua |>
+
+.gitignore
