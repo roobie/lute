@@ -7,6 +7,7 @@
 
 # Prepare and concat each separate module into one file.
 : inspect.lua                  \
+  debugger.lua                 \
   fun.lua                      \
   func.lua                     \
   prototype.lua                \
