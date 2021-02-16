@@ -218,4 +218,14 @@ tap:addTest(
     test:equal(tostring(l), 'List(2, 3, 4, 1)')
 end)
 
+tap:addTest(
+  'cons',
+  function (test)
+    local l = List.new {3, 4}
+    l = List.cons(2, l)
+    test:equal(tostring(l), 'List(2, 3, 4)')
+    l = List.cons(1, l)
+    test:equal(tostring(l), 'List(1, 2, 3, 4)')
+end)
+
 return tap

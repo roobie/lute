@@ -21,7 +21,7 @@ function Stack.__len (self)
   return self:length()
 end
 
-function Stack.isEmpty ()
+function Stack.isEmpty (self)
   return self._data:isEmpty()
 end
 
