@@ -11,6 +11,8 @@ local totalTestCount = 0
 local totalPassCount = 0
 local totalFailCount = 0
 
+local failMessages = {}
+
 local Test = prototype({
     enter = function (self, suiteName)
       printf('# %s%s', string.format('%s: ', suiteName) or ' ', self._name)
@@ -44,7 +46,9 @@ local Test = prototype({
       if not args.assertion() then
         totalFailCount = totalFailCount + 1
         self._success = false
-        printf('not ok %d %s', self._testCount, args.message)
+        local failMessage = fmt('not ok %d %s', self._testCount, args.message)
+        table.insert(failMessages, failMessage)
+        printf(failMessage)
         printf('  ---')
         args.printInfo()
         local tb = debug.traceback('', 2):sub(2)
@@ -222,6 +226,9 @@ function _module.printFooter ()
   printf('# pass %d', totalPassCount)
   printf('# fail %d', totalFailCount)
   printf('')
+  if _module.raiseErrors and (totalFailCount > 0) then
+    error(fmt('%d test(s) failed.\n%s', totalFailCount, table.concat(failMessages, '\n')))
+  end
 end
 
 function _module.new (opts)

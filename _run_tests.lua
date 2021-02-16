@@ -10,6 +10,7 @@ local StopWatch = require('stopwatch')
 
 local args = ...
 
+Tap.raiseErrors = true
 Tap.printHeader()
 
 local tests = {

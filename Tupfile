@@ -40,8 +40,12 @@
   dist/temp/modules.lua        \
   build/outro.txt              \
   |> cat %f > %o |> dist/lute.lua
+  
+: _run_tests.lua \
+  *.lua     \
+  |> luajit _run_tests.lua > %o |> test-results.txt
 
 # Test that the output file is loadable by lua
-: dist/lute.lua |> luajit dist/lute.lua |>
+: dist/lute.lua |> luajit %f |>
 
 .gitignore
