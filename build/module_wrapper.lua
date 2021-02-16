@@ -26,7 +26,7 @@ for i, modname in ipairs(args) do
   -- special case for debugger, because it should be lazy.
   if modname == 'debugger' then
     luaCode = strings.template.interpolate([[return function ()
-      %[sourceCode]
+%[sourceCode]
 end]], {sourceCode = luaCode})
   end
   local output = moduleTemplate {
