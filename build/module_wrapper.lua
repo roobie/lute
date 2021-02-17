@@ -11,11 +11,11 @@ local strings = require('strings')
 local tables = require('tables')
 
 local moduleTemplate = strings.template.compile[[
---- BEGIN %[module]
+--- BEGIN:(%[module])
 export.%[module] = (function ()
 %[sourceCode]
 end)()
---- END %[module]
+--- END:(%[module])
 ]]
 
 
@@ -23,6 +23,12 @@ local args = {...}
 for i, modname in ipairs(args) do
   local f = assert(io.open(modname..'.lua'))
   local luaCode = f:read('*a')
+  -- special case for debugger, because it should be lazy.
+  if modname == 'debugger' then
+    luaCode = strings.template.interpolate([[return function ()
+%[sourceCode]
+end]], {sourceCode = luaCode})
+  end
   local output = moduleTemplate {
     module = modname;
     sourceCode = luaCode;
