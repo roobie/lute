@@ -31,7 +31,7 @@ end
 
 function Randy.pickOne (self, tbl)
   if #tbl == 0 then
-    -- TODO map
+    return
   end
   return tbl[self:integer(#tbl)]
 end
@@ -45,7 +45,7 @@ function Randy.sample (self, tbl, count)
     pool[i] = v
   end
 
-  for i = 1, count do
+  for _ = 1, count do
     local n = self:integer(1, #pool)
     result[#result + 1] = pool[n]
     table.remove(pool, n)

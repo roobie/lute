@@ -17,14 +17,14 @@ List = prototype {
 
 function List.__tostring (self)
   local s = 'List('
-  for i, v in self:iter() do
+  for _, v in self:iter() do
     s = s..tostring(v)..', '
   end
 
   return s:sub(1, -3)..')'
 end
 
-function List.insertAfterNode (self, node, newNode)
+function List.insertAfterNode (_, node, newNode)
   newNode._next = node._next
   node._next = newNode
 end
@@ -38,15 +38,15 @@ function List.prepend (self, element)
   return self:prependNode(Node.new(element))
 end
 
-function List.removeAfterNode (self, node)
-  local obsoleteNode = node._next
+function List.removeAfterNode (_, node)
+  -- local obsoleteNode = node._next
   if node._next ~= nil then
     node._next = node._next._next
   end
 end
 
 function List.removeFirstNode (self)
-  local obsoleteNode = self._head
+  -- local obsoleteNode = self._head
   if self._head ~= nil then
     self._head = self._head._next
   end
@@ -84,7 +84,7 @@ function List.map (self, transform)
   end
 
   local result = List.new()
-  local currentNode = nil
+  local currentNode -- = nil
   local lastNode = nil
   local firstNode = nil
   for i, e in self:iter() do

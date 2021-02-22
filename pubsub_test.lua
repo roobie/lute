@@ -9,7 +9,7 @@ tap:addTest(
   function (test)
     local event = Pubsub.new()
     local c = 0
-    event:subscribe(function (v)
+    event:subscribe(function (_)
       c = c + 1
     end)
     event('data')

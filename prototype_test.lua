@@ -16,20 +16,20 @@ tap:addTest(
   'reuse prototype',
   function (test)
     local Type = prototype {
-      methodA = function (self)
+      methodA = function (_)
         return 1
       end;
-      methodB = function (self)
+      methodB = function (_)
         return 1
       end;
     }
     local SubType = prototype {
       Type;
       {
-        methodA = function (self)
+        methodA = function (_)
           return 2
         end;
-        methodC = function (self)
+        methodC = function (_)
           return 2
         end;
       }

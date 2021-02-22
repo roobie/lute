@@ -1,7 +1,6 @@
 
 local MaxHeap = require('max_heap')
 local Tap = require('tap')
-local fmt = require('fmt')
 
 local tap = Tap.new {name='max_heap.lua'}
 
@@ -38,6 +37,7 @@ tap:addTest(
         h:pop()
     end)
     test:isTrue(not ok)
+    test:isTrue(not not err)
 end)
 
 tap:addTest(
@@ -68,7 +68,7 @@ tap:addTest(
   'random (with floats)',
   function (test)
     local h = MaxHeap.new()
-    for i = 1, 10 do
+    for _ = 1, 10 do
       local p = math.random()
       h:insert(p, p)
     end

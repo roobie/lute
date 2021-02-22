@@ -76,7 +76,7 @@ mt = {
       return s
     end
     ffi.C.memmove(a.s + a.len, b.s, ffi.sizeof(a.type) * b.len)
-    return s
+    return a
   end;
 
   --- Zero based iterator. Returns a function which

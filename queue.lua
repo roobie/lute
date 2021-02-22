@@ -21,7 +21,7 @@ function Queue.__len (self)
   return self:length()
 end
 
-function Queue.isEmpty ()
+function Queue.isEmpty (self)
   return self._data:isEmpty()
 end
 

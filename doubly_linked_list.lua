@@ -212,8 +212,8 @@ end
 
 -- Finds a node in the list based on the index
 function List.findAt (self, index)
-  local found = false
-  local reference = nil
+  -- local found = false
+  -- local reference = nil
   local currentNode = self._head
 
   local count = 1
@@ -417,7 +417,8 @@ function List.sortInPlace (self, comparator)
   quickSort(self, comparator)
 end
 
--- FIXME: insertion sort would be better perhaps. Or enumerating into an array, and sorting that, because of bad performance on random access/linear search.
+-- FIXME: insertion sort would be better perhaps. Or enumerating into an array,
+-- and sorting that, because of bad performance on random access/linear search.
 function List.sort (self, comparator)
   -- local result = List.new()
   -- for _, e in self:iter() do
@@ -426,7 +427,7 @@ function List.sort (self, comparator)
   -- result:sortInPlace(comparator)
   -- return result
   local t = self:enumerate()
-  quickSortTable(t)
+  quickSortTable(t, comparator)
   return List.new(t)
 end
 

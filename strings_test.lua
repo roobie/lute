@@ -1,18 +1,12 @@
 local strings = require('strings')
 local Tap = require('tap')
-local inspect = require('inspect')
 local fmt = require('fmt')
-local tables = require('tables')
 local F = require('func')
 local curried = require('curried')
 
 local StopWatch = require('stopwatch')
 
 local __disablePerfTests = false
-
-local function dump (what)
-  print(inspect(what))
-end
 
 local tap = Tap.new {name = 'strings.lua'}
 
@@ -128,12 +122,10 @@ end)
 tap:addTest(
   'strings.template (HTML example)',
   function (test)
-    local render = strings.template.compile [[
-    <div>
+    local render = strings.template.compile [[<div>
       <h1>%[title]</h1>
       %[paragraphs]
-    </div>
-    ]]
+    </div>]]
     local renderParagraph = strings.template.compile('<p>%[content]</p>')
     local renderParagraphs = F.pipe {
       curried.map(function (content) return renderParagraph {content = content} end),
@@ -147,7 +139,8 @@ tap:addTest(
         'This is another paragraph'
       }
     }
-    print(output)
+    test:isTrue(strings.startsWith(output, "<div>"))
+    test:isTrue(strings.endsWith(output, "</div>"))
 end)
 
 tap:addTest(
@@ -183,7 +176,7 @@ tap:addTest(
       sw:reset()
       acc = {}
       local count = 5000
-      for i = 1, count do
+      for _ = 1, count do
         acc[#acc + 1] = fn()
       end
       local time = sw:millis()
@@ -227,7 +220,8 @@ tap:addTest(
                     math.random();
                   }
     end)
-    local render = strings.template.compile('header%[d[1]]%[d[2]]%[d[3]]%[d[4]]%[d[5]]%[d[6]]%[d[7]]%[d[8]]%[d[9]]%[d[10]]')
+    local render = strings.template.compile(
+      'header%[d[1]]%[d[2]]%[d[3]]%[d[4]]%[d[5]]%[d[6]]%[d[7]]%[d[8]]%[d[9]]%[d[10]]')
     performTest('template', function ()
                   return render {
                     d = {
@@ -259,6 +253,9 @@ tap:addTest(
   'strings.withLpeg',
   function (test)
     if pcall(require, 'lpeg') then
+      local lpeg = require('lpeg')
+      local P = lpeg.P
+      local maybe, either = 1, 1
       local result = strings.withLpeg(function ()
           test:isTrue(P ~= nil)
 

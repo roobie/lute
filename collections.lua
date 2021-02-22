@@ -51,37 +51,5 @@ local interfaces = {}
 
 
 interfaces.List = {}
-local List = interfaces.List
 
---- Static method
---- Creates a new instance of `List`.
-function List.new (initialElements) end
-
---- Static method
---- Constructs a new list from head (a value) and tail (a list)
-function List.cons (head, tail) end
-
---- Generic method
---- Prepends to the list a new node containing the supplied element.
-function List.prepend (self, element) end
-
---- Generic method
---- Appends to the list a new node containing the supplied element.
-function List.append (self, element) end
-
-function List.head (self) end
-function List.remove (self, element) end
-function List.removeAll (self, element) end
-function List.sort (self) end
-function List.sortInPlace (self) end
-
---- Generic method
---- Returns an iterator (index, element) that traverses the list in
---- order from beginning to end
-function List.iter (self) end
-
---- Generic method
---- Results in the total length of the list. This may be computed or stored.
-function List.length (self) end
-
-return {}
+return interfaces

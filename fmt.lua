@@ -4,23 +4,23 @@ local fmt = {}
 
 local metatable = {
   --- Allows `fmt` to be called, and if so works as string.format
-  __call = function (self, ...)
+  __call = function (_, ...)
     return string.format(...)
   end;
 }
 
 setmetatable(fmt, metatable)
 
-function fmt.printf (fmt, ...)
-  print(string.format(fmt, ...))
+function fmt.printf (format, ...)
+  print(string.format(format, ...))
 end
 
-function fmt.writef (fmt, ...)
-  io.write(string.format(fmt, ...))
+function fmt.writef (format, ...)
+  io.write(string.format(format, ...))
 end
 
-function fmt.fprintf (fd, fmt, ...)
-  fd:write(string.format(fmt, ...))
+function fmt.fprintf (fd, format, ...)
+  fd:write(string.format(format, ...))
 end
 
 function fmt.dump (object)

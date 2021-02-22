@@ -1,12 +1,11 @@
 
 local bit = require('bit')
-local AND, OR, NOT, XOR = bit.band, bit.bor, bit.bnot, bit.bxor
+local AND, OR, NOT = bit.band, bit.bor, bit.bnot
 local rshift, lshift = bit.rshift, bit.lshift
 local prototype = require('prototype')
-local inspect = require('inspect')
 
 local b = setmetatable({}, {
-    __call = function (self, bitOrdinal)
+    __call = function (_, bitOrdinal)
       return 2 ^ bitOrdinal
     end;
 })
@@ -58,7 +57,7 @@ end
 -- TODO consider prealloc an array with '0' and change only if needed
 function Bits.__tostring (self, numbits, bigendian)
   local value = self.ival
-  nbits = nbits or 32
+  local nbits = numbits or 32
   local res = {}
 
   if bigendian then
@@ -90,7 +89,7 @@ function Flags.new (flags)
   local preMt = getmetatable(instance)
   local newMt = setmetatable({}, preMt)
   newMt.__index = newMt
-  function newMt.__call (self, ...)
+  function newMt.__call (_, ...)
     local ival = 0
     for i = 1, select('#', ...) do
       ival = OR(ival, flags[select(i, ...)])

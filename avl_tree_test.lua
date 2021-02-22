@@ -2,12 +2,9 @@
 local Tree = require('avl_tree')
 local List = require('table_list')
 local prototype = require('prototype')
-local inspect = require('inspect')
 local strings = require('strings')
 local fmt = require('fmt')
 local Tap = require('tap')
-local Randy = require('randy')
-local r = Randy.new()
 
 local tap = Tap.new {name='avl_tree.lua'}
 
@@ -15,7 +12,9 @@ local function dump (node, depth)
   if not node then return end
   depth = depth or 0
   if node._right then dump(node._right, depth + 1) end
-  print(string.rep('\t',depth)..tostring(node._key)..':'..tostring(node._value)..' ('..strings.padl(node._balance, 2, ' ')..')')
+  print(string.rep('\t',depth)
+        ..tostring(node._key)..':'
+        ..tostring(node._value)..' ('..strings.padl(node._balance, 2, ' ')..')')
   if node._left then dump(node._left, depth + 1) end
 end
 
@@ -57,13 +56,6 @@ tap:addTest(
       return string.format('%s=>%s', self.key, self.value)
     end
 
-    local function tstr (t)
-      local s = ''
-      for k, v in pairs(t) do
-        s = s..tostring(k)..':'..tostring(v)
-      end
-      return s
-    end
     t:insert(Kvp.new('b', List.new()))
     t:insert(Kvp.new('d', List.new()))
     t:insert(Kvp.new('g', List.new()))
@@ -121,7 +113,7 @@ tap:addTest(
   'cannot',
   function (test)
     local t = Tree.new()
-    ok, err = pcall(function ()
+    local ok, err = pcall(function ()
         t:insert({})
     end)
     test:isFalse(ok)

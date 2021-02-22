@@ -30,13 +30,13 @@
 
 local prototype = require('prototype')
 
-local Node = {
-  _balance = 0;
-  _key = nil;
-  _value = nil;
-  _left = nil;
-  _right = nil;
-}
+-- local Node = {
+--   _balance = 0;
+--   _key = nil;
+--   _value = nil;
+--   _left = nil;
+--   _right = nil;
+-- }
 
 local Tree = prototype {
   _root = nil;
@@ -47,7 +47,7 @@ local Tree = prototype {
   end;
 }
 
-function rebalance (tree, node)
+local function rebalance (_, node)
   local rotated = false
   if node._balance > 1 then
     if node._right._balance < 0 then
@@ -88,7 +88,7 @@ function rebalance (tree, node)
   return node, rotated
 end
 
-function insert (tree, node, key, value)
+local function insert (tree, node, key, value)
   if node == nil then
     local newNode = {
       _balance = 0;
@@ -111,6 +111,7 @@ function insert (tree, node, key, value)
     node._right, grow = insert(tree, node._right, key, value)
     node._balance = node._balance + grow
   end
+  local rotated
   node, rotated = rebalance(tree, node)
   return node, (rotated or node._balance == 0) and 0 or grow
 end
@@ -132,10 +133,9 @@ local function deleteMove (tree, node, direction, multiplier)
 end
 
 local function delete (tree, node, key)
-  local grow = 0
+  local grow -- = 0
   local comparison = tree._comparator(key, node._key)
   if comparison == 0 then
-    local key
     -- FIXME why balance vs. nil-check
     if node._balance > 0 then
       node._right, grow, key = deleteMove(tree, node._right, LEFT, -1)
@@ -155,6 +155,7 @@ local function delete (tree, node, key)
     node._right, grow = delete(tree, node._right, key, true)
     node._balance = node._balance + grow
   end
+  local rotated
   node, rotated = rebalance(tree, node)
   return node, grow ~= 0 and (rotated or node._balance == 0) and -1 or 0
 end

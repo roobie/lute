@@ -108,7 +108,7 @@ end
 strings.trim = F.compose(strings.trimStart, strings.trimEnd)
 
 -- Ported from https://github.com/gustf/js-levenshtein (MIT)
-function strings.levenshteinDistance (a, b)
+function strings.levenshteinDistance (str1, str2)
   local function _min (d0, d1, d2, bx, ay)
     if d0 < d1 or d2 < d1 then
       if d0 > d2 then
@@ -164,9 +164,10 @@ function strings.levenshteinDistance (a, b)
       return lb
     end
 
-    local x = 0, y,
-    d0, d1, d2, d3, dd, dy, ay,
-    bx0, bx1, bx2, bx3
+    local x = 0
+    local
+      d0, d1, d2, d3, dd, dy, ay,
+      bx0, bx1, bx2, bx3
 
     local vector = {}
 
@@ -220,7 +221,7 @@ function strings.levenshteinDistance (a, b)
     return dd
   end
 
-  return distance(a, b)
+  return distance(str1, str2)
 end
 
 function strings.startsWith (str, substr)
@@ -348,7 +349,7 @@ function template.interpolate (tmpl, data)
 end
 
 do
-  ok, lpeg = pcall(function ()
+  local ok, lpeg = pcall(function ()
       return require('lpeg')
   end)
   if ok then
@@ -371,7 +372,7 @@ do
         end;
       }
       local mt = {}
-      mt.__index = function (self, key)
+      mt.__index = function (_, key)
         if lpeg[key] then
           return lpeg[key]
         elseif envObj[key] then

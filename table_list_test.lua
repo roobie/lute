@@ -1,9 +1,6 @@
 local List = require('table_list')
 
 local Tap = require('tap')
-local inspect = require('inspect')
-local fmt = require('fmt')
-local printf = fmt.printf
 
 local tap = Tap.new { name = 'table_list.lua' }
 
@@ -131,8 +128,8 @@ tap:addTest(
   function (test)
     local a, b, c, d = {20, 'a'}, {20, 'b'}, {30, 'c'}, {10, 'd'}
     local l = List.new {a, b, c, d}
-    local sl = l:sort(function (a, b)
-        return a[1] < b[1]
+    local sl = l:sort(function (aa, bb)
+        return aa[1] < bb[1]
     end)
     test:equal(sl[1][2], 'd')
     test:equal(sl[2][2], 'a') -- a and b should be in the order they were defined.

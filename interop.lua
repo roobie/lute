@@ -15,6 +15,8 @@ end
 local bind = func.bind
 
 local Program = prototype {}
+Program._newline = newline
+Program._delimiter = delimiter
 
 function Program.new (name)
 	return Program {

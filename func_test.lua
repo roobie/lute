@@ -1,8 +1,5 @@
 local F = require('func')
 local Tap = require('tap')
-local inspect = require('inspect')
-local fmt = require('fmt')
-local printf = fmt.printf
 local unpack = rawget(table, 'unpack') or unpack
 
 local tap = Tap.new { name = 'func.lua' }
@@ -17,7 +14,6 @@ end)
 tap:addTest(
   'compose',
   function (test)
-    local a = 1
     local f = F.compose(F.inc, F.double)
     test:equal(f(2), 5)
 
@@ -31,7 +27,6 @@ end)
 tap:addTest(
   'pipe',
   function (test)
-    local a = 1
     local f = F.pipe {
       F.inc,
       F.double,

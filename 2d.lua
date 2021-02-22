@@ -1,14 +1,14 @@
 
 local _2d = {}
 
-local function _2d.bresenham(x1, y1, x2, y2, callback)
+function _2d.bresenham(x1, y1, x2, y2, callback)
   local delta_x = x2 - x1
   local ix = delta_x > 0 and 1 or -1
-  local delta_x = 2 * math.abs(delta_x)
+  delta_x = 2 * math.abs(delta_x)
 
   local delta_y = y2 - y1
   local iy = delta_y > 0 and 1 or -1
-  local delta_y = 2 * math.abs(delta_y)
+  delta_y = 2 * math.abs(delta_y)
 
   callback(x1, y1)
 

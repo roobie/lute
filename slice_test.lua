@@ -1,6 +1,5 @@
 
 local Tap = require('tap')
-local inspect = require('inspect')
 local ffi = require('ffi')
 
 local slice = require('slice')
@@ -14,15 +13,14 @@ local byte_t = ffi.typeof("uint8_t")
 tap:addTest(
   'basics',
   function (test)
-    local a, b
+    local a, b = 1, 1
+    test:equal(a, b)
 end)
 
 tap:addTest(
   'iteration',
   function (test)
-    local a, b
-
-    a = slice.make(int_t,  {1, 2, 3, 4, 5})
+    local a = slice.make(int_t,  {1, 2, 3, 4, 5})
 
     for i, v in a:iter() do
       test:equal(v, i + 1)

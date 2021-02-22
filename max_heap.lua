@@ -25,7 +25,6 @@
 ]]
 
 local prototype = require('prototype')
-local tables = require('tables')
 
 local MaxHeap = prototype {}
 

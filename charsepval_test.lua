@@ -1,7 +1,6 @@
 
 local csvCtor = require('charsepval')
 local Tap = require('tap')
-local inspect = require('inspect')
 
 local tap = Tap.new {name = 'charsepval.lua'}
 

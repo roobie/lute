@@ -1,7 +1,6 @@
 local List = require('doubly_linked_list')
 
 local Tap = require('tap')
-local inspect = require('inspect')
 local fmt = require('fmt')
 local printf = fmt.printf
 
@@ -39,7 +38,7 @@ tap:addTest(
     printf('# %s', l1)
 
     local s = ''
-    for i, v in l1:iter() do
+    for _, v in l1:iter() do
       s = s..tostring(v)..','
     end
     test:equal(s, '1,2,3,')
@@ -49,8 +48,8 @@ tap:addTest(
     test:equal(l1:length(), 5)
     l1:remove(1)
     test:equal(l1:length(), 4)
-    local s = ''
-    for i, v in l1:iter() do
+    s = ''
+    for _, v in l1:iter() do
       s = s..tostring(v)..','
     end
     test:equal(s, '2,3,4,5,')
@@ -71,7 +70,7 @@ tap:addTest(
     l1:add(5)
     test:equal(l1:length(), 5)
     local t = {}
-    for i, v in l1:iter() do
+    for _, v in l1:iter() do
       table.insert(t, v)
     end
     for _, v in ipairs(t) do
@@ -105,11 +104,11 @@ end)
 tap:addTest(
   'Test __index and __newindex',
   function (test)
-    l0 = List.new()
+    local l0 = List.new()
     test:equal(tostring(l0), 'List()')
     l0:insertAt(1, 1)
     test:equal(tostring(l0), 'List(1)')
-    l1 = List.new {1, 2}
+    local l1 = List.new {1, 2}
     test:equal(tostring(l1), 'List(1, 2)')
     l1:insertAt(1, 0)
     test:equal(tostring(l1), 'List(0, 1, 2)')
@@ -195,13 +194,15 @@ tap:addTest(
 
 
     l = List.new()
-    for _, n in l:iter() do
+    for _ in l:iter() do
+      error("Unreachable")
     end
     l:add(1)
     test:equal(l:length(), 1)
 
     l = List.new()
-    for _, n in l:iterReverse() do
+    for _ in l:iterReverse() do
+      error("Unreachable")
     end
     l:add(1)
     test:equal(l:length(), 1)

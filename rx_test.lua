@@ -1,13 +1,12 @@
 
-local inspect = require('inspect')
-local fmt = require('fmt')
 local tap = require('tap').new {name = 'rx.lua'}
 local rx = require('kitchen_sink.rx')
 
 tap:addTest(
   'rx',
   function (test)
-    if false then
+    test:equal(1, 1)
+    if test == nil then
       local function emitter (fn)
         local obj = {counter = 0; callback = fn}
         function obj.trigger (self)

@@ -11,8 +11,6 @@
   The only function it serves is to tell you the number of seconds since
   the reset() method was called.
 
-  TODO: posix implementation
-
 --]]
 
 local ffi = require('ffi')
@@ -20,7 +18,7 @@ local C = ffi.C
 local prototype = require('prototype')
 
 local function winimpl ()
-  local profileapi = require('lj2win32.win32.profileapi')
+  -- local profileapi = require('lj2win32.win32.profileapi')
 
   local function GetPerformanceFrequency (anum)
     anum = anum or ffi.new('int64_t[1]')
@@ -57,7 +55,7 @@ local function winimpl ()
     __index = StopWatch
   }
 
-  function StopWatch.init (self, obj)
+  function StopWatch.init (_, obj)
     obj = obj or
       {
         starttime = 0
@@ -73,7 +71,7 @@ local function winimpl ()
     return StopWatch.init({})
   end
 
-  function StopWatch.ticks (self)
+  function StopWatch.ticks ()
     return GetPerformanceCounter()
   end
 
@@ -130,8 +128,8 @@ local function posiximpl ()
 
   local clock_gettime = ffi.load('rt').time_clock_gettime
 
-  local function tos(t)
-    return tonumber(t.s) + tonumber(t.ns) / 1e9
+  local function tos(tm)
+    return tonumber(tm.s) + tonumber(tm.ns) / 1e9
   end
 
   local function time()
@@ -166,6 +164,14 @@ local function posiximpl ()
 
   function StopWatch.reset (self)
     self.starttime = clock()
+  end
+
+  function StopWatch.sleep (_, seconds)
+    sleep(seconds)
+  end
+
+  function StopWatch.time ()
+    return time()
   end
 
 

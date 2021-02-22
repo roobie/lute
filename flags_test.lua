@@ -3,7 +3,6 @@ local Flags = require('lute.flags')
 local Bits = Flags.Bits
 local tap = require('tap').new {name='flags.lua'}
 
-local StopWatch = require('stopwatch')
 local fmt = require('fmt')
 
 tap:addTest(
@@ -18,6 +17,7 @@ tap:addTest(
     local fp1 = fsPerm('execute', 'read')
 
     local hasAccess = fp1:has(fsPerm.execute)
+    test:isTrue(hasAccess)
     test:isTrue(fp1:has(fsPerm.execute))
     test:isFalse(fp1:has(fsPerm.write))
     -- print(hasAccess)

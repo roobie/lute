@@ -3,7 +3,6 @@ local QTree = require('quad_tree')
 local fmt = require('fmt')
 local Tap = require('tap')
 local tap = Tap.new {name = 'quad_tree.lua'}
-local r = require('randy').new()
 
 tap:addTest(
   'QTree.insert',

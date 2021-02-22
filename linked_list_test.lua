@@ -1,9 +1,6 @@
 local List = require('linked_list')
 
 local Tap = require('tap')
-local inspect = require('inspect')
-local fmt = require('fmt')
-local printf = fmt.printf
 
 local tap = Tap.new { name = 'linked_list.lua' }
 

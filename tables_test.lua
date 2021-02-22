@@ -1,7 +1,5 @@
 local tables = require('tables')
-local quickSort = require('quick_sort')
 local Tap = require('tap')
-local inspect = require('inspect')
 local List = require('table_list')
 
 local tap = Tap.new {name = 'tables.lua'}
@@ -105,8 +103,8 @@ tap:addTest(
         return List.cons({k, e}, out)
       end,
       List.new())
-    merged:sortInPlace(function (a, b) return a[1] < b[1] end)
-    local function reducer (s, e, k)
+    merged:sortInPlace(function (aa, bb) return aa[1] < bb[1] end)
+    local function reducer (s, e, _)
       return s..tostring(e[1])..':'..tostring(e[2])..','
     end
     local str = tables.reduce(merged, reducer, '')
@@ -120,16 +118,17 @@ tap:addTest(
       atable = { 123, 234, 345 };
       ktable = {test1 = 123, test2 = 234};
     }
-    local v = tables.get(data, 'atable.1', 'NOTFOUND')
+    local v
+    v = tables.get(data, 'atable.1', 'NOTFOUND')
     test:equal(v, 123)
-    local v = tables.get(data, 'atable.2', 'NOTFOUND')
+    v = tables.get(data, 'atable.2', 'NOTFOUND')
     test:equal(v, 234)
-    local v = tables.get(data, 'atable.3', 'NOTFOUND')
+    v = tables.get(data, 'atable.3', 'NOTFOUND')
     test:equal(v, 345)
-    local v = tables.get(data, 'atable.4', 'NOTFOUND')
+    v = tables.get(data, 'atable.4', 'NOTFOUND')
     test:equal(v, 'NOTFOUND')
 
-    local v = tables.get(data, 'ktable.test1', 'NOTFOUND')
+    v = tables.get(data, 'ktable.test1', 'NOTFOUND')
     test:equal(v, 123)
 end)
 

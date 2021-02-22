@@ -127,7 +127,7 @@ function List.cons (element, list)
     return result
   end
 
-  for i, e in list:iter() do
+  for _, e in list:iter() do
     result:append(e)
   end
 
@@ -141,8 +141,8 @@ end
 -- TODO: consider a generator instead
 function List.skip (self, count)
   local result = List.new()
-  local min = self:length(), count + 1
-  for i = count + 1, #self do
+  local start, stop = count + 1, self:length()
+  for i = start, stop do
     result:append(self[i])
   end
 
@@ -175,7 +175,7 @@ end
 function List.__div (self, other)
   other = List(other)
   local result = List.new()
-  for i, v in ipairs(self) do
+  for _, v in ipairs(self) do
     if not other:contains(v) then
       result:append(v)
     end
@@ -204,7 +204,7 @@ function List.new (elements)
   local result = List { }
 
   if type(elements) == 'table' then
-    for i, e in ipairs(elements) do
+    for _, e in ipairs(elements) do
       result:append(e)
     end
   end

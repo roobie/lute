@@ -172,10 +172,10 @@ local function dump (tree, name, depth)
     s = s..tostring(p)
   end
   local hasChildren = false
-  local function str (name, t)
+  local function str (name1, t)
     if t ~= nil then
       hasChildren = true
-      s = s..'\n'..dump(t, name, depth + 1)
+      s = s..'\n'..dump(t, name1, depth + 1)
     end
   end
   str('nw', tree.nw)

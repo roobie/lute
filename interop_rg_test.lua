@@ -1,6 +1,4 @@
 
-local inspect = require('inspect')
-local fmt = require('fmt')
 local tap = require('tap').new {name = 'interop_rg.lua'}
 local interop = require('interop')
 local ffi = require('ffi')

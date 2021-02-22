@@ -28,13 +28,14 @@ local Test = prototype({
       printf('# Time elapsed: %f ms', sw:millis())
     end;
 
-    comment = function (self, message)
+    comment = function (_, message)
       print(string.format('# %s', message))
     end;
 
     plan = function (self, expectedTestCount)
       if self._expectedTestCount ~= 0 then
         -- TODO: cannot set this more than once
+        error("Cannot call `plan' more than once per test")
       end
       self._expectedTestCount = expectedTestCount
       -- printf('%d..%d', 1, self._expectedTestCount)
@@ -197,12 +198,9 @@ local TestSuite = prototype({
       table.insert(self._tests, test)
     end;
     run = function (self)
-      if self._name then
-        --printf('# Suite: %s', self._name)
-      end
-      for n, test in ipairs(self._tests) do
+      for _, test in ipairs(self._tests) do
         test:enter(self._name)
-        ok = xpcall(
+        xpcall(
           function ()
             test._testFunction(test)
           end, function (err)

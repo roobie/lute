@@ -1,8 +1,6 @@
 
 local MinHeap = require('min_heap')
 local Tap = require('tap')
-local fmt = require('fmt')
-local printf = fmt.printf
 
 local tap = Tap.new {name='min_heap.lua'}
 
@@ -22,15 +20,16 @@ tap:addTest(
     test:equal(
       tostring(minh),
       'MinHeap(a| MinHeap(d), MinHeap(b| MinHeap(c)))')
-    local e, minh = minh:pop()
+    local e
+    e, minh = minh:pop()
     test:equal(e, 'a')
     test:equal(
       tostring(minh),
       'MinHeap(d| MinHeap(b| MinHeap(c)))')
 
-    local e, minh = minh:pop()
+    e, minh = minh:pop()
     test:equal(e, 'd')
-    local e, minh = minh:pop()
+    e = minh:pop()
     test:equal(e, 'b')
 
 end)
